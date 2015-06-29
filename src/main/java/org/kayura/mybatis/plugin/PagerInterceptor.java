@@ -6,6 +6,7 @@ package org.kayura.mybatis.plugin;
 
 import org.kayura.logging.Log;
 import org.kayura.logging.LogFactory;
+import org.kayura.mybatis.type.PageBounds;
 
 import java.util.Properties;
 
@@ -24,21 +25,24 @@ import org.apache.ibatis.session.RowBounds;
  * 
  */
 @Intercepts(value = { @Signature(type = Executor.class, method = "query", args = {
-		MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }) })
+		MappedStatement.class, Object.class, RowBounds.class,
+		ResultHandler.class }) })
 public class PagerInterceptor implements Interceptor {
 
 	private static Log log = LogFactory.getLog(PagerInterceptor.class);
 
+	private String dialectClass;
+
 	public Object intercept(Invocation invocation) throws Throwable {
 		final Object[] args = invocation.getArgs();
-		
-		final Executor executor = (Executor)invocation.getTarget();
-		final MappedStatement ms = (MappedStatement)args[0];
-		final Object parameter = args[1];
-		final RowBounds rowBounds = (RowBounds)args[2];
-		
 
-		return null;
+		final Executor executor = (Executor) invocation.getTarget();
+		final MappedStatement ms = (MappedStatement) args[0];
+		final Object parameter = args[1];
+		final RowBounds rowBounds = (RowBounds) args[2];
+		final PageBounds pageBounds = new PageBounds(rowBounds);
+
+		return invocation.proceed();
 	}
 
 	public Object plugin(Object target) {
@@ -46,7 +50,12 @@ public class PagerInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {
+		String dialect = properties.getProperty("dialect");
+		setDialectClass(dialect);
+	}
 
+	public void setDialectClass(String dialectClass) {
+		this.dialectClass = dialectClass;
 	}
 
 }
