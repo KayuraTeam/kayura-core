@@ -20,6 +20,8 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import sun.reflect.generics.scope.ClassScope;
+
 /**
  * @author liangxia@live.com
  * 
@@ -56,6 +58,12 @@ public class PagerInterceptor implements Interceptor {
 
 	public void setDialectClass(String dialectClass) {
 		this.dialectClass = dialectClass;
+		try {
+			Class.forName(dialectClass);
+			
+		} catch (Exception e) {
+			log.error("PagerInterceptor 插件 dialectClass 错误。", e);
+		}
 	}
 
 }
