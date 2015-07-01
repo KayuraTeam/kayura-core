@@ -18,6 +18,7 @@ public class PageBounds extends RowBounds implements Serializable {
 	private Integer pageIndex;
 	private Integer pageSize;
 	private Boolean containsTotalRecords;
+	private String orderBy;
 
 	/**
 	 * 
@@ -29,6 +30,7 @@ public class PageBounds extends RowBounds implements Serializable {
 			this.pageIndex = pageBounds.pageIndex;
 			this.pageSize = pageBounds.pageSize;
 			this.containsTotalRecords = pageBounds.containsTotalRecords;
+			this.orderBy = pageBounds.orderBy;
 		} else {
 			this.pageIndex = (rowBounds.getOffset() / rowBounds.getLimit()) + 1;
 			this.pageSize = rowBounds.getLimit();
@@ -87,6 +89,14 @@ public class PageBounds extends RowBounds implements Serializable {
 
 	public Boolean getAsyncTotalRecords() {
 		return containsTotalRecords;
+	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
 	}
 
 }

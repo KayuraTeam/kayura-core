@@ -8,6 +8,7 @@ import org.kayura.logging.Log;
 import org.kayura.logging.LogFactory;
 import org.kayura.mybatis.type.PageBounds;
 
+import java.sql.Connection;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.Executor;
@@ -20,8 +21,6 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import sun.reflect.generics.scope.ClassScope;
-
 /**
  * @author liangxia@live.com
  * 
@@ -32,9 +31,7 @@ import sun.reflect.generics.scope.ClassScope;
 public class PagerInterceptor implements Interceptor {
 
 	private static Log log = LogFactory.getLog(PagerInterceptor.class);
-
-	private String dialectClass;
-
+	
 	public Object intercept(Invocation invocation) throws Throwable {
 		final Object[] args = invocation.getArgs();
 
@@ -43,6 +40,7 @@ public class PagerInterceptor implements Interceptor {
 		final Object parameter = args[1];
 		final RowBounds rowBounds = (RowBounds) args[2];
 		final PageBounds pageBounds = new PageBounds(rowBounds);
+		
 
 		return invocation.proceed();
 	}
@@ -52,18 +50,7 @@ public class PagerInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {
-		String dialect = properties.getProperty("dialect");
-		setDialectClass(dialect);
-	}
 
-	public void setDialectClass(String dialectClass) {
-		this.dialectClass = dialectClass;
-		try {
-			Class.forName(dialectClass);
-			
-		} catch (Exception e) {
-			log.error("PagerInterceptor 插件 dialectClass 错误。", e);
-		}
 	}
 
 }
