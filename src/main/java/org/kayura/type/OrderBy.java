@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * @author liangxia@live.com
@@ -15,53 +16,117 @@ import java.util.Locale;
  */
 public class OrderBy implements Serializable {
 
-	private static final long serialVersionUID = 6612623083549201741L;
-
-	private String column;
+	private static final long serialVersionUID = -3402748185352719347L;
 	private Direction direction;
+	private String property;
+	private String orderExpr;
 
-	public OrderBy(String column, Direction direction) {
-		this.setColumn(column);
-		this.setDirection(direction);
-	}
-
-	public String getColumn() {
-		return column;
-	}
-
-	public void setColumn(String column) {
-		this.column = column;
+	public OrderBy(String property, Direction direction, String orderExpr) {
+		this.direction = direction;
+		this.property = property;
+		this.orderExpr = orderExpr;
 	}
 
 	public Direction getDirection() {
 		return direction;
 	}
 
+	public String getProperty() {
+		return property;
+	}
+
+	public String getOrderExpr() {
+		return orderExpr;
+	}
+
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
 
+	public void setProperty(String property) {
+		this.property = property;
+	}
+
+	public void setOrderExpr(String orderExpr) {
+		this.orderExpr = orderExpr;
+	}
+
+	private static String INJECTION_REGEX = "[A-Za-z0-9\\_\\-\\+\\.]+";
+
+	public static boolean isSQLInjection(String str) {
+		return !Pattern.matches(INJECTION_REGEX, str);
+	}
+
+	@Override
+	public String toString() {
+		if (isSQLInjection(property)) {
+			throw new IllegalArgumentException("SQLInjection property: "
+					+ property);
+		}
+		if (orderExpr != null && orderExpr.indexOf("?") != -1) {
+			String[] exprs = orderExpr.split("\\?");
+			if (exprs.length == 2) {
+				return String.format(orderExpr.replaceAll("\\?", "%s"),
+						property)
+						+ (direction == null ? "" : " " + direction.name());
+			}
+			return String.format(orderExpr.replaceAll("\\?", "%s"), property,
+					direction == null ? "" : " " + direction.name());
+		}
+		return property + (direction == null ? "" : " " + direction.name());
+	}
+
+	public static List<OrderBy> formString(String orderSegment) {
+		return formString(orderSegment, null);
+	}
+
 	/**
-	 * 
-	 * @param order 排序列，示例： code asc,name desc
-	 * @return 返回排序列集合.
+	 * @param orderSegment
+	 *            ex: "id.asc,code.desc" or "code.desc"
 	 */
-	public static List<OrderBy> fromString(String orderGroup) {
+	public static List<OrderBy> formString(String orderSegment, String orderExpr) {
+		if (orderSegment == null || orderSegment.trim().equals("")) {
+			return new ArrayList<OrderBy>(0);
+		}
+
 		List<OrderBy> results = new ArrayList<OrderBy>();
-		String[] orders = orderGroup.split(",");
-		for (String o : orders) {
-			results.add(_fromString(o));
+		String[] orderSegments = orderSegment.trim().split(",");
+		for (int i = 0; i < orderSegments.length; i++) {
+			String sortSegment = orderSegments[i];
+			OrderBy order = _formString(sortSegment, orderExpr);
+			if (order != null) {
+				results.add(order);
+			}
 		}
 		return results;
 	}
 
-	private static OrderBy _fromString(String orderItem) {
-		String[] arrayList = orderItem.split("\\s+");
-		
-		String column = arrayList[0];
-		String direction = arrayList.length == 2 ? arrayList[1] : "asc";
+	private static OrderBy _formString(String orderSegment, String orderExpr) {
 
-		return new OrderBy(column, Direction.fromString(direction));
+		if (orderSegment == null || orderSegment.trim().equals("")
+				|| orderSegment.startsWith("null.")
+				|| orderSegment.startsWith(".")) {
+			return null;
+		}
+
+		String[] array = orderSegment.trim().split("\\.");
+		if (array.length != 1 && array.length != 2) {
+			throw new IllegalArgumentException(
+					"orderSegment pattern must be {property}.{direction}, input is: "
+							+ orderSegment);
+		}
+
+		return create(array[0], array.length == 2 ? array[1] : "asc", orderExpr);
+	}
+
+	public static OrderBy create(String property, String direction) {
+		return create(property, direction, null);
+	}
+
+	public static OrderBy create(String property, String direction,
+			String orderExpr) {
+		return new OrderBy(property, OrderBy.Direction.fromString(direction),
+				orderExpr);
 	}
 
 	public static enum Direction {

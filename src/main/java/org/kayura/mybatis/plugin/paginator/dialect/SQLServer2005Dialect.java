@@ -4,9 +4,7 @@
  */
 package org.kayura.mybatis.plugin.paginator.dialect;
 
-import java.util.Locale;
-
-import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.kayura.mybatis.plugin.paginator.Dialect;
 import org.kayura.mybatis.type.PageBounds;
 
@@ -16,86 +14,55 @@ import org.kayura.mybatis.type.PageBounds;
  */
 public class SQLServer2005Dialect extends Dialect {
 
-	private static final String SELECT = "select";
-	private static final String SELECT_WITH_SPACE = SELECT + ' ';
-	private static final String DISTINCT = "distinct";
-	private static final String ORDER_BY = "order by";
-	
-	public SQLServer2005Dialect(BoundSql boundSql, PageBounds pageBounds) {
-		super(boundSql, pageBounds);
+	public SQLServer2005Dialect(MappedStatement mappedStatement,
+			Object parameterObject, PageBounds pageBounds) {
+		super(mappedStatement, parameterObject, pageBounds);
 	}
 
-	@Override
-	public String getLimitString(String queryString, int offset, int limit) {
-		
-		final StringBuilder sb = new StringBuilder( queryString );
-		
-		if ( sb.charAt( sb.length() - 1 ) == ';' ) {
-			sb.setLength( sb.length() - 1 );
-		}
+	protected String getLimitString(String sql, String offsetName, int offset,
+			String limitName, int limit) {
+		StringBuffer pagingBuilder = new StringBuffer();
+		String orderby = getOrderByPart(sql);
+		String distinctStr = "";
 
-		final String selectClause = "*";
-
-		final int orderByIndex = shallowIndexOfWord( sb, ORDER_BY, 0 );
-		if ( orderByIndex > 0 ) {
-			// ORDER BY requires using TOP.
-			addTopExpression( sb );
-		}
-
-		encloseWithOuterQuery( sb );
-
-		// Wrap the query within a with statement:
-		sb.insert( 0, "WITH query AS (" ).append( ") SELECT " ).append( selectClause ).append( " FROM query " );
-		sb.append( "WHERE __mybatis_row_nr__ >= ").append(offset).append(" AND __mybatis_row_nr__ < ").append(limit);
-
-		return sb.toString();
-	}
-	
-	private void encloseWithOuterQuery(StringBuilder sb) {
-		sb.insert( 0, "SELECT inner_query.*, ROW_NUMBER() OVER (ORDER BY CURRENT_TIMESTAMP) as __mybatis_row_nr__ FROM ( " );
-		sb.append( " ) inner_query " );
-	}
-
-	private void addTopExpression(StringBuilder sql) {
-		final int distinctStartPos = shallowIndexOfWord( sql, DISTINCT, 0 );
-		if ( distinctStartPos > 0 ) {
-			// Place TOP after DISTINCT.
-			sql.insert( distinctStartPos + DISTINCT.length(), " TOP(?)" );
-		}
-		else {
-			final int selectStartPos = shallowIndexOf( sql, SELECT_WITH_SPACE, 0 );
-			// Place TOP after SELECT.
-			sql.insert( selectStartPos + SELECT.length(), " TOP(?)" );
-		}
-	}
-
-	private static int shallowIndexOfWord(final StringBuilder sb, final String search, int fromIndex) {
-		final int index = shallowIndexOf( sb, ' ' + search + ' ', fromIndex );
-		return index != -1 ? ( index + 1 ) : -1;
-	}
-	
-	private static int shallowIndexOf(StringBuilder sb, String search, int fromIndex) {
-		final String lowercase = sb.toString().toLowerCase(Locale.ROOT);
-		final int len = lowercase.length();
-		final int searchlen = search.length();
-		int pos = -1;
-		int depth = 0;
-		int cur = fromIndex;
-		do {
-			pos = lowercase.indexOf( search, cur );
-			if ( pos != -1 ) {
-				for ( int iter = cur; iter < pos; iter++ ) {
-					final char c = sb.charAt( iter );
-					if ( c == '(' ) {
-						depth = depth + 1;
-					}
-					else if ( c == ')' ) {
-						depth = depth - 1;
-					}
-				}
-				cur = pos + searchlen;
+		String loweredString = sql.toLowerCase();
+		String sqlPartString = sql;
+		if (loweredString.trim().startsWith("select")) {
+			int index = 6;
+			if (loweredString.startsWith("select distinct")) {
+				distinctStr = "DISTINCT ";
+				index = 15;
 			}
-		} while ( cur < len && depth != 0 && pos != -1 );
-		return depth == 0 ? pos : -1;
+			sqlPartString = sqlPartString.substring(index);
+		}
+		pagingBuilder.append(sqlPartString);
+
+		if (orderby == null || orderby.length() == 0) {
+			orderby = "ORDER BY CURRENT_TIMESTAMP";
+		}
+
+		StringBuffer result = new StringBuffer();
+		result.append("WITH query AS (SELECT ")
+				.append(distinctStr)
+				.append("TOP 100 PERCENT ")
+				.append(" ROW_NUMBER() OVER (")
+				.append(orderby)
+				.append(") as __row_number__, ")
+				.append(pagingBuilder)
+				.append(") SELECT * FROM query WHERE __row_number__ > ? AND __row_number__ <= ?")
+				.append(" ORDER BY __row_number__");
+		setPageParameter(offsetName, offset, Integer.class);
+		setPageParameter("__offsetEnd", offset + limit, Integer.class);
+		return result.toString();
+	}
+
+	static String getOrderByPart(String sql) {
+		String loweredString = sql.toLowerCase();
+		int orderByIndex = loweredString.indexOf("order by");
+		if (orderByIndex != -1) {
+			return sql.substring(orderByIndex);
+		} else {
+			return "";
+		}
 	}
 }

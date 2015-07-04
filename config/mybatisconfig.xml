@@ -6,6 +6,7 @@
 	<!-- 用于在执行某个映射语句时的拦截调用. -->
 	<plugins>
 		<plugin interceptor="org.kayura.mybatis.plugin.PagerInterceptor">
+			<property name="dialectClass" value="org.kayura.mybatis.plugin.paginator.dialect.MySQLDialect" />
 		</plugin>
 	</plugins>
 

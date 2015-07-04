@@ -4,7 +4,7 @@
  */
 package org.kayura.mybatis.plugin.paginator.dialect;
 
-import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.kayura.mybatis.plugin.paginator.Dialect;
 import org.kayura.mybatis.type.PageBounds;
 
@@ -14,17 +14,23 @@ import org.kayura.mybatis.type.PageBounds;
  */
 public class MySQLDialect extends Dialect {
 
-	/**
-	 * @param boundSql
-	 * @param pageBounds
-	 */
-	public MySQLDialect(BoundSql boundSql, PageBounds pageBounds) {
-		super(boundSql, pageBounds);
+	public MySQLDialect(MappedStatement mappedStatement,
+			Object parameterObject, PageBounds pageBounds) {
+		super(mappedStatement, parameterObject, pageBounds);
 	}
 
-	@Override
-	public String getLimitString(String queryString, int offset, int limit) {
-		return queryString + (offset > 0 ? " limit ?, ?" : " limit ?");
+	protected String getLimitString(String sql, String offsetName, int offset,
+			String limitName, int limit) {
+		StringBuffer buffer = new StringBuffer(sql.length() + 20).append(sql);
+		if (offset > 0) {
+			buffer.append(" limit ?, ?");
+			setPageParameter(offsetName, offset, Integer.class);
+			setPageParameter(limitName, limit, Integer.class);
+		} else {
+			buffer.append(" limit ?");
+			setPageParameter(limitName, limit, Integer.class);
+		}
+		return buffer.toString();
 	}
 
 }

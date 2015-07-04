@@ -4,7 +4,13 @@
  */
 package org.kayura.mybatis.type;
 
+import org.kayura.type.OrderBy;
+import org.kayura.type.OrderBy.Direction;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 
@@ -14,89 +20,146 @@ import org.apache.ibatis.session.RowBounds;
  */
 public class PageBounds extends RowBounds implements Serializable {
 
-	private static final long serialVersionUID = -2108309143990112254L;
-	private Integer pageIndex;
-	private Integer pageSize;
-	private Boolean containsTotalRecords;
-	private String orderBy;
+	private static final long serialVersionUID = -950104274492012413L;
+	public final static int NO_PAGE = 1;
+	protected int page = NO_PAGE;
+	protected int limit = NO_ROW_LIMIT;
+	protected List<OrderBy> orderbys = new ArrayList<OrderBy>();
+	protected boolean containsTotalCount;
+	protected Boolean asyncTotalCount;
 
-	/**
-	 * 
-	 * @param rowBounds
-	 */
+	public PageBounds() {
+		containsTotalCount = false;
+	}
+
 	public PageBounds(RowBounds rowBounds) {
 		if (rowBounds instanceof PageBounds) {
 			PageBounds pageBounds = (PageBounds) rowBounds;
-			this.pageIndex = pageBounds.pageIndex;
-			this.pageSize = pageBounds.pageSize;
-			this.containsTotalRecords = pageBounds.containsTotalRecords;
-			this.orderBy = pageBounds.orderBy;
+			this.page = pageBounds.page;
+			this.limit = pageBounds.limit;
+			this.orderbys = pageBounds.orderbys;
+			this.containsTotalCount = pageBounds.containsTotalCount;
+			this.asyncTotalCount = pageBounds.asyncTotalCount;
 		} else {
-			this.pageIndex = (rowBounds.getOffset() / rowBounds.getLimit()) + 1;
-			this.pageSize = rowBounds.getLimit();
+			this.page = (rowBounds.getOffset() / rowBounds.getLimit()) + 1;
+			this.limit = rowBounds.getLimit();
 		}
+
+	}
+
+	public PageBounds(int limit) {
+		this.limit = limit;
+		this.containsTotalCount = false;
+	}
+
+	public PageBounds(int page, int limit) {
+		this(page, limit, new ArrayList<OrderBy>(), true);
+	}
+
+	public PageBounds(int page, int limit, boolean containsTotalCount) {
+		this(page, limit, new ArrayList<OrderBy>(), containsTotalCount);
 	}
 
 	/**
-	 * 分页参数类型构造方法.
+	 * Just sorting, default containsTotalCount = false
 	 * 
-	 * @param pageIndex
-	 *            将要访问的页数索引.
-	 * @param pageSize
-	 *            每页要显示的行数,如果该值小于等于零,表示不分页.
+	 * @param orders
 	 */
-	public PageBounds(Integer pageIndex, Integer pageSize) {
-		this(pageIndex, pageSize, true);
+	public PageBounds(List<OrderBy> orders) {
+		this(NO_PAGE, NO_ROW_LIMIT, orders, false);
 	}
 
 	/**
-	 * 分页参数类型构造方法.
+	 * Just sorting, default containsTotalCount = false
 	 * 
-	 * @param pageIndex
-	 *            将要访问的页数索引.
-	 * @param pageSize
-	 *            每页要显示的行数,如果该值小于等于零,表示不分页.
-	 * @param containsTotalRecords
-	 *            是否需要统计总记录数.
+	 * @param order
 	 */
-	public PageBounds(Integer pageIndex, Integer pageSize,
-			Boolean containsTotalRecords) {
-		this.pageIndex = pageIndex;
-		this.pageSize = pageSize;
-		this.containsTotalRecords = containsTotalRecords;
+	public PageBounds(OrderBy... order) {
+		this(NO_PAGE, NO_ROW_LIMIT, order);
+		this.containsTotalCount = false;
 	}
 
-	public Integer getPageIndex() {
-		return pageIndex;
+	public PageBounds(int page, int limit, OrderBy... order) {
+		this(page, limit, Arrays.asList(order), true);
 	}
 
-	public Integer getPageSize() {
-		return pageSize;
+	public PageBounds(int page, int limit, List<OrderBy> orders) {
+		this(page, limit, orders, true);
+	}
+
+	public PageBounds(int page, int limit, List<OrderBy> orders,
+			boolean containsTotalCount) {
+		this.page = page;
+		this.limit = limit;
+		this.orderbys = orders;
+		this.containsTotalCount = containsTotalCount;
+	}
+
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public boolean isContainsTotalCount() {
+		return containsTotalCount;
+	}
+
+	public void setContainsTotalCount(boolean containsTotalCount) {
+		this.containsTotalCount = containsTotalCount;
+	}
+
+	public List<OrderBy> getOrders() {
+		return orderbys;
+	}
+
+	public void setOrders(List<OrderBy> orders) {
+		this.orderbys = orders;
+	}
+
+	public void setOrderBy(String property, Direction direction) {
+		if (this.orderbys == null) {
+			this.orderbys = new ArrayList<OrderBy>();
+		}
+
+		orderbys.add(new OrderBy(property, direction, ""));
+	}
+
+	public Boolean getAsyncTotalCount() {
+		return asyncTotalCount;
+	}
+
+	public void setAsyncTotalCount(Boolean asyncTotalCount) {
+		this.asyncTotalCount = asyncTotalCount;
 	}
 
 	@Override
 	public int getOffset() {
-		if (pageIndex >= 1) {
-			return (pageIndex - 1) * pageSize;
+		if (page >= 1) {
+			return (page - 1) * limit;
 		}
 		return 0;
 	}
 
 	@Override
-	public int getLimit() {
-		return pageSize;
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("PageBounds{");
+		sb.append("page=").append(page);
+		sb.append(", limit=").append(limit);
+		sb.append(", orders=").append(orderbys);
+		sb.append(", containsTotalCount=").append(containsTotalCount);
+		sb.append(", asyncTotalCount=").append(asyncTotalCount);
+		sb.append('}');
+		return sb.toString();
 	}
-
-	public Boolean getAsyncTotalRecords() {
-		return containsTotalRecords;
-	}
-
-	public String getOrderBy() {
-		return orderBy;
-	}
-
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-	}
-
 }

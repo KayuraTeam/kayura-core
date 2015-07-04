@@ -6,39 +6,43 @@ package org.kayura.type;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author liangxia@live.com
  *
  */
-public class PageList<E> implements Serializable {
+public class PageList<E> extends ArrayList<E> implements Serializable {
 
 	private static final long serialVersionUID = 1611112691285620907L;
 
-	private List<E> data;
-	private Integer totleRecords;
+	private Paginator paginator;
 
-	public PageList(List<E> data) {
-		this(data, -1);
+	public PageList() {
 	}
 
-	public PageList(List<E> data, Integer totleRecords) {
-		this.data = new ArrayList<E>();
-		this.data.addAll(data);
-		this.totleRecords = totleRecords;
+	public PageList(Collection<? extends E> data) {
+		super(data);
 	}
 
-	public List<E> getData() {
-		return data;
+	public PageList(Collection<? extends E> data, Paginator paginator) {
+		super(data);
+		this.paginator = paginator;
 	}
 
-	public Integer getTotleRecords() {
-		return totleRecords;
+	public PageList(Paginator paginator) {
+		this.paginator = paginator;
 	}
 
-	public void setTotleRecords(Integer totleRecords) {
-		this.totleRecords = totleRecords;
+	public Paginator getPaginator() {
+		return paginator;
 	}
 
+	public int getTotalPages() {
+		return paginator.getTotalPages();
+	}
+
+	public int getTotalCount() {
+		return paginator.getTotalCount();
+	}
 }
