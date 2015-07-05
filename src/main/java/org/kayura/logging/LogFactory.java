@@ -7,6 +7,7 @@ package org.kayura.logging;
 import java.lang.reflect.Constructor;
 
 /**
+ * @author liangxia@live.com
  * @author Clinton Begin
  * @author Eduardo Macarron
  */

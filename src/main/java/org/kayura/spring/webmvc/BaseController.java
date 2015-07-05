@@ -101,7 +101,6 @@ public abstract class BaseController {
 	public void execute(Map<String, Object> map, Action executeAction) {
 
 		PostResult postResult = new PostResult();
-		postResult.setSuccess("调用执行成功.");
 
 		try {
 			executeAction.invoke(postResult);
