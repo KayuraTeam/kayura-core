@@ -11,7 +11,7 @@ import org.kayura.mybatis.plugin.paginator.SqlHelper;
 import org.kayura.mybatis.type.PageBounds;
 import org.kayura.type.PageList;
 import org.kayura.type.Paginator;
-import org.kayura.utils.PropertiesHelper;
+import org.kayura.utils.PropertiesUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -210,7 +210,7 @@ public class PagerInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {
-		PropertiesHelper propertiesHelper = new PropertiesHelper(properties);
+		PropertiesUtils propertiesHelper = new PropertiesUtils(properties);
 		String dialectClass = propertiesHelper
 				.getRequiredString("dialectClass");
 		setDialectClass(dialectClass);

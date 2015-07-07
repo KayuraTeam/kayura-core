@@ -12,7 +12,7 @@ import java.util.Map.Entry;
  * @author liangxia@live.com
  *
  */
-public class PropertiesHelper {
+public class PropertiesUtils {
 
 	public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
 	public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
@@ -21,11 +21,11 @@ public class PropertiesHelper {
 
 	private Properties p;
 
-	public PropertiesHelper(Properties p) {
+	public PropertiesUtils(Properties p) {
 		setProperties(p);
 	}
 
-	public PropertiesHelper(Properties p, int systemPropertiesMode) {
+	public PropertiesUtils(Properties p, int systemPropertiesMode) {
 		setProperties(p);
 		if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
 				&& systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK

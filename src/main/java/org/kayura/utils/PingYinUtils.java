@@ -18,7 +18,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 /**
  * @author liangxia@live.com
  */
-public class PingYin {
+public class PingYinUtils {
 
 	private static Map<String, List<String>> pinyinMap = new HashMap<String, List<String>>();
 	private static Boolean initialized = false;
@@ -30,7 +30,7 @@ public class PingYin {
 			// 读取多音字的全部拼音表;
 			String fileName = "duoyindic.txt";
 
-			InputStream file = PingYin.class.getResourceAsStream(fileName);
+			InputStream file = PingYinUtils.class.getResourceAsStream(fileName);
 			BufferedReader br = new BufferedReader(new InputStreamReader(file));
 
 			String s = null;
