@@ -2,20 +2,21 @@
  * Copyright 2015-2015 the original author or authors.
  * HomePage: http://www.kayura.org
  */
-package org.kayura.type;
+package org.kayura.web;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.kayura.mybatis.type.PageBounds;
+import org.kayura.type.PageList;
 import org.springframework.ui.Model;
 
 /**
  * @author liangxia@live.com
  *
  */
-public interface WebUISupport {
+public interface UISupport {
 	
 	/**
 	 * 用于从提供请求信息中获取分页信息.

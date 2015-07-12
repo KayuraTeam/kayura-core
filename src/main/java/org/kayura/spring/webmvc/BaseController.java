@@ -13,7 +13,7 @@ import org.kayura.logging.Log;
 import org.kayura.logging.LogFactory;
 import org.kayura.mybatis.type.PageBounds;
 import org.kayura.type.PageList;
-import org.kayura.type.WebUISupport;
+import org.kayura.web.UISupport;
 import org.springframework.ui.Model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ public abstract class BaseController {
 	private static final Log logger = LogFactory.getLog(BaseController.class);
 
 	private ObjectMapper objectMapper = new ObjectMapper();
-	private WebUISupport webuiSupport;
+	private UISupport webuiSupport;
 	private String viewRootPath;
 
 	public void setViewRootPath(String viewRootPath) {
