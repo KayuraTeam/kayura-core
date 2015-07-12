@@ -12,7 +12,7 @@ import java.util.Map;
  * @author liangxia@live.com
  *
  */
-public class ResultValue implements Serializable {
+public class Result implements Serializable {
 
 	private static final long serialVersionUID = -6068065272117750613L;
 
@@ -20,17 +20,17 @@ public class ResultValue implements Serializable {
 	private String message;
 	private Map<String, Object> attach;
 
-	public ResultValue() {
+	public Result() {
 		attach = new HashMap<String, Object>();
 		this.code = 0;
 	}
 
-	public ResultValue(Integer code) {
+	public Result(Integer code) {
 		this();
 		this.code = code;
 	}
 
-	public ResultValue(Integer code, String message) {
+	public Result(Integer code, String message) {
 		this(code);
 		this.message = message;
 	}
