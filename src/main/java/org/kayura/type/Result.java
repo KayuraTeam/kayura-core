@@ -16,8 +16,8 @@ public class Result implements Serializable {
 
 	private static final long serialVersionUID = -6068065272117750613L;
 
+	private StringBuilder msgBuilder = new StringBuilder();
 	private Integer code;
-	private String message;
 	private Map<String, Object> attach;
 
 	public Result() {
@@ -32,7 +32,7 @@ public class Result implements Serializable {
 
 	public Result(Integer code, String message) {
 		this(code);
-		this.message = message;
+		this.msgBuilder.append(message);
 	}
 
 	public Map<String, Object> getAttach() {
@@ -60,10 +60,10 @@ public class Result implements Serializable {
 	}
 
 	public String getMessage() {
-		return message;
+		return msgBuilder.toString();
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void addMessage(String message, Object... args) {
+		this.msgBuilder.append(String.format(message, args) + "\r\n");
 	}
 }
