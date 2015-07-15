@@ -10,13 +10,12 @@ import java.util.Map;
 
 /**
  * @author liangxia@live.com
- *
  */
 public class Result implements Serializable {
 
 	private static final long serialVersionUID = -6068065272117750613L;
 
-	private StringBuilder msgBuilder = new StringBuilder();
+	private String message;
 	private Integer code;
 	private Map<String, Object> attach;
 
@@ -32,7 +31,7 @@ public class Result implements Serializable {
 
 	public Result(Integer code, String message) {
 		this(code);
-		this.msgBuilder.append(message);
+		this.message = message;
 	}
 
 	public Map<String, Object> getAttach() {
@@ -60,10 +59,10 @@ public class Result implements Serializable {
 	}
 
 	public String getMessage() {
-		return msgBuilder.toString();
+		return message;
 	}
 
-	public void addMessage(String message, Object... args) {
-		this.msgBuilder.append(String.format(message, args) + "\r\n");
+	public void setMessage(String message, Object... args) {
+		this.message = String.format(message, args);
 	}
 }
