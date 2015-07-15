@@ -2,7 +2,6 @@ package org.kayura.logging.Log4j2;
 
 import org.kayura.logging.Log;
 import org.kayura.logging.LogFactory;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -35,19 +34,23 @@ public class Log4j2AbstractLoggerImpl implements Log {
 		log.logIfEnabled(FQCN, Level.ERROR, MARKER, new SimpleMessage(s), e);
 	}
 
-	public void error(String s) {
-		log.logIfEnabled(FQCN, Level.ERROR, MARKER, new SimpleMessage(s), null);
+	public void error(String s, Object... args) {
+		log.logIfEnabled(FQCN, Level.ERROR, MARKER,
+				new SimpleMessage(String.format(s, args)), null);
 	}
 
-	public void debug(String s) {
-		log.logIfEnabled(FQCN, Level.DEBUG, MARKER, new SimpleMessage(s), null);
+	public void debug(String s, Object... args) {
+		log.logIfEnabled(FQCN, Level.DEBUG, MARKER,
+				new SimpleMessage(String.format(s, args)), null);
 	}
 
-	public void trace(String s) {
-		log.logIfEnabled(FQCN, Level.TRACE, MARKER, new SimpleMessage(s), null);
+	public void trace(String s, Object... args) {
+		log.logIfEnabled(FQCN, Level.TRACE, MARKER,
+				new SimpleMessage(String.format(s, args)), null);
 	}
 
-	public void warn(String s) {
-		log.logIfEnabled(FQCN, Level.WARN, MARKER, new SimpleMessage(s), null);
+	public void warn(String s, Object... args) {
+		log.logIfEnabled(FQCN, Level.WARN, MARKER,
+				new SimpleMessage(String.format(s, args)), null);
 	}
 }
