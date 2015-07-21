@@ -5,23 +5,20 @@
 package org.kayura.type;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author liangxia@live.com
  */
-public class Result implements Serializable {
+public class Result<E extends Serializable> implements Serializable {
 
-	private static final long serialVersionUID = -6068065272117750613L;
+	private static final long serialVersionUID = 37468166158631349L;
 
 	private String message;
 	private Integer code;
-	private Map<String, Object> attach;
+	private E data;
 
 	public Result() {
-		attach = new HashMap<String, Object>();
-		this.code = 0;
+		this.code = 1;
 	}
 
 	public Result(Integer code) {
@@ -34,20 +31,10 @@ public class Result implements Serializable {
 		this.message = message;
 	}
 
-	public Map<String, Object> getAttach() {
-		return attach;
-	}
-
-	public void addAttach(String key, Object value) {
-		attach.put(key, value);
-	}
-
-	public Object getAttach(String key) {
-		return attach.get(key);
-	}
-
-	public void removeAttach(String key) {
-		attach.remove(key);
+	public Result(Integer code, String message, E data) {
+		this(code);
+		this.message = message;
+		this.data = data;
 	}
 
 	public Integer getCode() {
@@ -64,5 +51,13 @@ public class Result implements Serializable {
 
 	public void setMessage(String message, Object... args) {
 		this.message = String.format(message, args);
+	}
+
+	public E getData() {
+		return data;
+	}
+
+	public void setData(E data) {
+		this.data = data;
 	}
 }
