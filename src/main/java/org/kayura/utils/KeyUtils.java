@@ -10,8 +10,8 @@ import java.util.UUID;
  * @author liangxia@live.com
  */
 public class KeyUtils {
-	
-	public static String newid(){
-		return UUID.randomUUID().toString();
-	}
+    
+    public static String newId() {
+	return UUID.randomUUID().toString().toUpperCase();
+    }
 }
