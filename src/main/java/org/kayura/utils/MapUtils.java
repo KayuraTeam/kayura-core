@@ -4,12 +4,9 @@
  */
 package org.kayura.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author liangxia@live.com
  */
 public class MapUtils {
-
+    
 }

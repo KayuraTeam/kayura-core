@@ -9,23 +9,23 @@ package org.kayura.exceptions;
  *
  */
 public class KayuraException extends RuntimeException {
-
-	private static final long serialVersionUID = 3288055430650604215L;
-
-	public KayuraException() {
-		super();
-	}
-
-	public KayuraException(String message) {
-		super(message);
-	}
-
-	public KayuraException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
-	public KayuraException(Throwable cause) {
-		super(cause);
-	}
-
+    
+    private static final long serialVersionUID = 3288055430650604215L;
+    
+    public KayuraException() {
+	super();
+    }
+    
+    public KayuraException(String message) {
+	super(message);
+    }
+    
+    public KayuraException(String message, Throwable cause) {
+	super(message, cause);
+    }
+    
+    public KayuraException(Throwable cause) {
+	super(cause);
+    }
+    
 }
