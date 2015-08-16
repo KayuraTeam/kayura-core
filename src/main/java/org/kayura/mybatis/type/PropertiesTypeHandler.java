@@ -1,11 +1,11 @@
 package org.kayura.mybatis.type;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
@@ -13,23 +13,16 @@ import org.apache.ibatis.type.JdbcType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * @author liangxia@live.com
- */
-public class JsonTypeHandler<E extends Serializable> extends BaseTypeHandler<E> {
+public class PropertiesTypeHandler extends BaseTypeHandler<Properties> {
     
-    Class<E> type;
     ObjectMapper objectMapper = new ObjectMapper();
     
-    public JsonTypeHandler(Class<E> type) {
-	if (type == null)
-	    throw new IllegalArgumentException("Type argument cannot be null");
-	this.type = type;
+    public PropertiesTypeHandler() {
     }
     
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
-	    throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, Properties parameter,
+	    JdbcType jdbcType) throws SQLException {
 	String s;
 	try {
 	    s = objectMapper.writeValueAsString(parameter);
@@ -39,11 +32,11 @@ public class JsonTypeHandler<E extends Serializable> extends BaseTypeHandler<E> 
 	}
     }
     
-    private E getJsonObject(String json) {
-	E o = null;
+    private Properties getJsonObject(String json) {
+	Properties o = null;
 	try {
 	    if (json != null && json != "") {
-		o = (E) objectMapper.readValue(json, type);
+		o = (Properties) objectMapper.readValue(json, Properties.class);
 	    }
 	} catch (JsonProcessingException e) {
 	    e.printStackTrace();
@@ -54,21 +47,20 @@ public class JsonTypeHandler<E extends Serializable> extends BaseTypeHandler<E> 
     }
     
     @Override
-    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    public Properties getNullableResult(ResultSet rs, String columnName) throws SQLException {
 	String json = rs.getString(columnName);
 	return getJsonObject(json);
     }
     
     @Override
-    public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+    public Properties getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
 	String json = rs.getString(columnIndex);
 	return getJsonObject(json);
     }
     
     @Override
-    public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+    public Properties getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
 	String json = cs.getString(columnIndex);
 	return getJsonObject(json);
     }
-    
 }
