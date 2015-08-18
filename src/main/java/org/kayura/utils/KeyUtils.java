@@ -14,4 +14,5 @@ public class KeyUtils {
     public static String newId() {
 	return UUID.randomUUID().toString().toUpperCase();
     }
+    
 }
