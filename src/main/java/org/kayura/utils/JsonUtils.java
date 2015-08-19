@@ -17,34 +17,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class JsonUtils {
-
-	private static Log log = LogFactory.getLog(JsonUtils.class);
-	private static ObjectMapper objectMapper = new ObjectMapper();
-
-	public static <E> E fromString(String json, Class<E> classType) {
-		E o = null;
-		try {
-			if (json != null && json != "") {
-				o = (E) objectMapper.readValue(json, classType);
-			}
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			log.error(e.getMessage(), e);
-		} catch (IOException e) {
-			e.printStackTrace();
-			log.error(e.getMessage(), e);
-		}
-		return o;
+    
+    private static Log log = LogFactory.getLog(JsonUtils.class);
+    private static ObjectMapper objectMapper = new ObjectMapper();
+    
+    public static <E> E fromString(String json, Class<E> classType) {
+	E o = null;
+	try {
+	    if (json != null && json != "") {
+		o = (E) objectMapper.readValue(json, classType);
+	    }
+	} catch (JsonProcessingException e) {
+	    e.printStackTrace();
+	    log.error(e.getMessage(), e);
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    log.error(e.getMessage(), e);
 	}
-
-	public static String fromObject(Object value) {
-		String s = null;
-		try {
-			s = objectMapper.writeValueAsString(value);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			log.error(e.getMessage(), e);
-		}
-		return s;
+	return o;
+    }
+    
+    public static String fromObject(Object value) {
+	String s = null;
+	try {
+	    s = objectMapper.writeValueAsString(value);
+	} catch (JsonProcessingException e) {
+	    e.printStackTrace();
+	    log.error(e.getMessage(), e);
 	}
+	return s;
+    }
 }

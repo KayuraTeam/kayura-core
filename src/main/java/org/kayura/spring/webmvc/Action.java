@@ -8,9 +8,9 @@ package org.kayura.spring.webmvc;
  * 提供执行代理的方法接口.
  */
 public interface Action {
-	
-	/**
-	 * 用于实现的方法执行体.
-	 */
-	void invoke(PostResult postResult);
+    
+    /**
+     * 用于实现的方法执行体.
+     */
+    void invoke(PostResult postResult);
 }

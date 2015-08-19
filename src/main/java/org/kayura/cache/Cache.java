@@ -11,11 +11,18 @@ import java.util.concurrent.locks.ReadWriteLock;
  *
  */
 public interface Cache {
-	String getId();
-	void put(Object key, Object value);
-	Object get(Object key);
-	Object remove(Object key);
-	void clear();
-	int getSize();
-	ReadWriteLock getReadWriteLock();
+    
+    String getId();
+    
+    void put(Object key, Object value);
+    
+    Object get(Object key);
+    
+    Object remove(Object key);
+    
+    void clear();
+    
+    int getSize();
+    
+    ReadWriteLock getReadWriteLock();
 }

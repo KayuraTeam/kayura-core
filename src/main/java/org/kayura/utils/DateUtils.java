@@ -12,17 +12,17 @@ import java.util.Date;
  *
  */
 public class DateUtils {
-
-	public static Date now() {
-		return new Date(System.currentTimeMillis());
-	}
-
-	public static String now(String format) {
-		return format(now(), format);
-	}
-
-	public static String format(Date date, String format) {
-		SimpleDateFormat df = new SimpleDateFormat(format);
-		return df.format(date);
-	}
+    
+    public static Date now() {
+	return new Date(System.currentTimeMillis());
+    }
+    
+    public static String now(String format) {
+	return format(now(), format);
+    }
+    
+    public static String format(Date date, String format) {
+	SimpleDateFormat df = new SimpleDateFormat(format);
+	return df.format(date);
+    }
 }
