@@ -2,24 +2,21 @@
  * Copyright 2015-2015 the original author or authors.
  * HomePage: http://www.kayura.org
  */
-package org.kayura.mybatis.type;
+package org.kayura.type;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.ibatis.session.RowBounds;
-import org.kayura.type.OrderBy;
-import org.kayura.type.PageParams;
 import org.kayura.type.OrderBy.Direction;
 
 /**
  * @author liangxia@live.com
  */
-public class PageBounds extends RowBounds implements Serializable {
+public class PageParams implements Serializable {
 
-	private static final long serialVersionUID = 4749581887359387697L;
+	private static final long serialVersionUID = -950104274492012413L;
 
 	public final static int NO_PAGE = 1;
 	public static final int NO_ROW_OFFSET = 0;
@@ -31,63 +28,41 @@ public class PageBounds extends RowBounds implements Serializable {
 	protected boolean containsTotalCount;
 	protected Boolean asyncTotalCount;
 
-	public PageBounds() {
+	public PageParams() {
 		containsTotalCount = false;
 	}
 
-	public PageBounds(PageParams pageParams) {
-		this.page = pageParams.getPage();
-		this.limit = pageParams.getLimit();
-		this.orderbys = pageParams.getOrders();
-		this.containsTotalCount = pageParams.getAsyncTotalCount();
-		this.asyncTotalCount = pageParams.getAsyncTotalCount();
-	}
-
-	public PageBounds(RowBounds rowBounds) {
-		if (rowBounds instanceof PageBounds) {
-			PageBounds pageBounds = (PageBounds) rowBounds;
-			this.page = pageBounds.page;
-			this.limit = pageBounds.limit;
-			this.orderbys = pageBounds.orderbys;
-			this.containsTotalCount = pageBounds.containsTotalCount;
-			this.asyncTotalCount = pageBounds.asyncTotalCount;
-		} else {
-			this.page = rowBounds.getLimit();
-			this.limit = rowBounds.getLimit();
-		}
-	}
-
-	public PageBounds(int limit) {
+	public PageParams(int limit) {
 		this.limit = limit;
 		this.containsTotalCount = false;
 	}
 
-	public PageBounds(int page, int limit) {
+	public PageParams(int page, int limit) {
 		this(page, limit, new ArrayList<OrderBy>(), true);
 	}
 
-	public PageBounds(int page, int limit, boolean containsTotalCount) {
+	public PageParams(int page, int limit, boolean containsTotalCount) {
 		this(page, limit, new ArrayList<OrderBy>(), containsTotalCount);
 	}
 
-	public PageBounds(List<OrderBy> orders) {
+	public PageParams(List<OrderBy> orders) {
 		this(NO_PAGE, NO_ROW_LIMIT, orders, false);
 	}
 
-	public PageBounds(OrderBy... order) {
+	public PageParams(OrderBy... order) {
 		this(NO_PAGE, NO_ROW_LIMIT, order);
 		this.containsTotalCount = false;
 	}
 
-	public PageBounds(int page, int limit, OrderBy... order) {
+	public PageParams(int page, int limit, OrderBy... order) {
 		this(page, limit, Arrays.asList(order), true);
 	}
 
-	public PageBounds(int page, int limit, List<OrderBy> orders) {
+	public PageParams(int page, int limit, List<OrderBy> orders) {
 		this(page, limit, orders, true);
 	}
 
-	public PageBounds(int page, int limit, List<OrderBy> orders, boolean containsTotalCount) {
+	public PageParams(int page, int limit, List<OrderBy> orders, boolean containsTotalCount) {
 		this.page = page;
 		this.limit = limit;
 		this.orderbys = orders;
@@ -151,7 +126,7 @@ public class PageBounds extends RowBounds implements Serializable {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("PageBounds{");
+		final StringBuilder sb = new StringBuilder("PageParams{");
 		sb.append("page=").append(page);
 		sb.append(", limit=").append(limit);
 		sb.append(", orders=").append(orderbys);

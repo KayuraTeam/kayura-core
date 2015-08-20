@@ -8,7 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.kayura.mybatis.type.PageBounds;
+import org.kayura.type.PageParams;
 import org.kayura.type.PageList;
 import org.springframework.ui.Model;
 
@@ -24,7 +24,7 @@ public interface UISupport {
      * @param req Http提供请求信息.
      * @return 分页信息对象.
      */
-    PageBounds getPageBounds(HttpServletRequest req);
+    PageParams getPageBounds(HttpServletRequest req);
     
     /**
      * 向请求结果集添加数据. <li>totalCount: 表示总记录数.<br> <li>data: 表示查询结果集.<br>

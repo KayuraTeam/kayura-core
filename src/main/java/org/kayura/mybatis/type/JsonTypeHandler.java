@@ -17,58 +17,57 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author liangxia@live.com
  */
 public class JsonTypeHandler<E extends Serializable> extends BaseTypeHandler<E> {
-    
-    Class<E> type;
-    ObjectMapper objectMapper = new ObjectMapper();
-    
-    public JsonTypeHandler(Class<E> type) {
-	if (type == null)
-	    throw new IllegalArgumentException("Type argument cannot be null");
-	this.type = type;
-    }
-    
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType)
-	    throws SQLException {
-	String s;
-	try {
-	    s = objectMapper.writeValueAsString(parameter);
-	    ps.setString(i, s);
-	} catch (JsonProcessingException e) {
-	    e.printStackTrace();
+
+	Class<E> type;
+	ObjectMapper objectMapper = new ObjectMapper();
+
+	public JsonTypeHandler(Class<E> type) {
+		if (type == null)
+			throw new IllegalArgumentException("Type argument cannot be null");
+		this.type = type;
 	}
-    }
-    
-    private E getJsonObject(String json) {
-	E o = null;
-	try {
-	    if (json != null && json != "") {
-		o = (E) objectMapper.readValue(json, type);
-	    }
-	} catch (JsonProcessingException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
+
+	@Override
+	public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
+		String s;
+		try {
+			s = objectMapper.writeValueAsString(parameter);
+			ps.setString(i, s);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
-	return o;
-    }
-    
-    @Override
-    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-	String json = rs.getString(columnName);
-	return getJsonObject(json);
-    }
-    
-    @Override
-    public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-	String json = rs.getString(columnIndex);
-	return getJsonObject(json);
-    }
-    
-    @Override
-    public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-	String json = cs.getString(columnIndex);
-	return getJsonObject(json);
-    }
-    
+
+	private E getJsonObject(String json) {
+		E o = null;
+		try {
+			if (json != null && json != "") {
+				o = (E) objectMapper.readValue(json, type);
+			}
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return o;
+	}
+
+	@Override
+	public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
+		String json = rs.getString(columnName);
+		return getJsonObject(json);
+	}
+
+	@Override
+	public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+		String json = rs.getString(columnIndex);
+		return getJsonObject(json);
+	}
+
+	@Override
+	public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+		String json = cs.getString(columnIndex);
+		return getJsonObject(json);
+	}
+
 }
