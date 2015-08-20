@@ -2,7 +2,7 @@
  * Copyright 2015-2015 the original author or authors.
  * HomePage: http://www.kayura.org
  */
-package org.kayura.xml.parsing;
+package org.kayura.xml;
 
 import org.kayura.exceptions.KayuraException;
 
@@ -31,7 +31,7 @@ import org.xml.sax.SAXParseException;
  * @author liangxia@live.com
  * @author Clinton Begin
  */
-public class XPathParser {
+public class XDocument {
 
 	private Document document;
 	private boolean validation;
@@ -39,65 +39,65 @@ public class XPathParser {
 	private Properties variables;
 	private XPath xpath;
 
-	public XPathParser(String xml) {
+	public XDocument(String xml) {
 		commonConstructor(false, null, null);
 		this.document = createDocument(new InputSource(xml));
 	}
 
-	public XPathParser(String xml, boolean validation) {
+	public XDocument(String xml, boolean validation) {
 		commonConstructor(validation, null, null);
 		this.document = createDocument(new InputSource(xml));
 	}
 
-	public XPathParser(String xml, boolean validation, Properties variables) {
+	public XDocument(String xml, boolean validation, Properties variables) {
 		commonConstructor(validation, variables, null);
 		this.document = createDocument(new InputSource(xml));
 	}
 
-	public XPathParser(String xml, boolean validation, Properties variables,
+	public XDocument(String xml, boolean validation, Properties variables,
 			EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = createDocument(new InputSource(xml));
 	}
 
-	public XPathParser(Reader reader) {
+	public XDocument(Reader reader) {
 		commonConstructor(false, null, null);
 		this.document = createDocument(new InputSource(reader));
 	}
 
-	public XPathParser(Reader reader, boolean validation) {
+	public XDocument(Reader reader, boolean validation) {
 		commonConstructor(false, null, null);
 		this.document = createDocument(new InputSource(reader));
 	}
 
-	public XPathParser(Reader reader, boolean validation, Properties variables) {
+	public XDocument(Reader reader, boolean validation, Properties variables) {
 		commonConstructor(validation, variables, null);
 		this.document = createDocument(new InputSource(reader));
 	}
 
-	public XPathParser(Reader reader, boolean validation, Properties variables,
+	public XDocument(Reader reader, boolean validation, Properties variables,
 			EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = createDocument(new InputSource(reader));
 	}
 
-	public XPathParser(Document document) {
+	public XDocument(Document document) {
 		commonConstructor(false, null, null);
 		this.document = document;
 	}
 
-	public XPathParser(Document document, boolean validation) {
+	public XDocument(Document document, boolean validation) {
 		commonConstructor(false, null, null);
 		this.document = document;
 	}
 
-	public XPathParser(Document document, boolean validation,
+	public XDocument(Document document, boolean validation,
 			Properties variables) {
 		commonConstructor(validation, variables, null);
 		this.document = document;
 	}
 
-	public XPathParser(Document document, boolean validation,
+	public XDocument(Document document, boolean validation,
 			Properties variables, EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = document;

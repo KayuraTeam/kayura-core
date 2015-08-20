@@ -2,7 +2,7 @@
  * Copyright 2015-2015 the original author or authors.
  * HomePage: http://www.kayura.org
  */
-package org.kayura.xml.parsing;
+package org.kayura.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,9 @@ public class XNode {
 	private String body;
 	private Properties attributes;
 	private Properties variables;
-	private XPathParser xpathParser;
+	private XDocument xpathParser;
 
-	public XNode(XPathParser xpathParser, Node node, Properties variables) {
+	public XNode(XDocument xpathParser, Node node, Properties variables) {
 		this.xpathParser = xpathParser;
 		this.node = node;
 		this.name = node.getNodeName();
@@ -69,10 +69,8 @@ public class XNode {
 			if (current != this) {
 				builder.insert(0, "_");
 			}
-			String value = current.getStringAttribute(
-					"id",
-					current.getStringAttribute("value",
-							current.getStringAttribute("property", null)));
+			String value = current.getStringAttribute("id",
+					current.getStringAttribute("value", current.getStringAttribute("property", null)));
 			if (value != null) {
 				value = value.replace('.', '_');
 				builder.insert(0, "]");
@@ -189,8 +187,7 @@ public class XNode {
 		return getEnumAttribute(enumType, name, null);
 	}
 
-	public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType,
-			String name, T def) {
+	public <T extends Enum<T>> T getEnumAttribute(Class<T> enumType, String name, T def) {
 		String value = getStringAttribute(name);
 		if (value == null) {
 			return def;
@@ -342,8 +339,7 @@ public class XNode {
 		if (attributeNodes != null) {
 			for (int i = 0; i < attributeNodes.getLength(); i++) {
 				Node attribute = attributeNodes.item(i);
-				String value = PropertyParser.parse(attribute.getNodeValue(),
-						variables);
+				String value = PropertyParser.parse(attribute.getNodeValue(), variables);
 				attributes.put(attribute.getNodeName(), value);
 			}
 		}
@@ -365,8 +361,7 @@ public class XNode {
 	}
 
 	private String getBodyData(Node child) {
-		if (child.getNodeType() == Node.CDATA_SECTION_NODE
-				|| child.getNodeType() == Node.TEXT_NODE) {
+		if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
 			String data = ((CharacterData) child).getData();
 			data = PropertyParser.parse(data, variables);
 			return data;
