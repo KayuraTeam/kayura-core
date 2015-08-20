@@ -4,7 +4,7 @@
 <mapper namespace="test">
 
 	<select id="getUsers" resultType="map">
-		SELECT * FROM user
+		SELECT * FROM "users"
 	</select>
 
 </mapper>
