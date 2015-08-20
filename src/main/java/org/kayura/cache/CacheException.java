@@ -11,22 +11,22 @@ import org.kayura.exceptions.KayuraException;
  *
  */
 public class CacheException extends KayuraException {
-    
-    private static final long serialVersionUID = -4154301649611902739L;
-    
-    public CacheException() {
-	super();
-    }
-    
-    public CacheException(String message) {
-	super(message);
-    }
-    
-    public CacheException(String message, Throwable cause) {
-	super(message, cause);
-    }
-    
-    public CacheException(Throwable cause) {
-	super(cause);
-    }
+
+	private static final long serialVersionUID = -4154301649611902739L;
+
+	public CacheException() {
+		super();
+	}
+
+	public CacheException(String message) {
+		super(message);
+	}
+
+	public CacheException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public CacheException(Throwable cause) {
+		super(cause);
+	}
 }
