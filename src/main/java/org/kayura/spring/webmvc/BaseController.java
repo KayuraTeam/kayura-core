@@ -10,7 +10,6 @@ import org.kayura.type.PageParams;
 import org.kayura.type.PageList;
 import org.kayura.web.UISupport;
 
-import java.nio.file.Paths;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,7 +77,8 @@ public abstract class BaseController {
 	 * @return 返回 viewRootPath下的视图名的.
 	 */
 	public String viewResult(String viewName) {
-		return Paths.get(viewRootPath, viewName).toString();
+		return viewRootPath + viewName;
+		//return Paths.get(viewRootPath, viewName).toString();
 	}
 
 	/**

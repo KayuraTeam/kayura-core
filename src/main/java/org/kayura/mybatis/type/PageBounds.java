@@ -4,15 +4,16 @@
  */
 package org.kayura.mybatis.type;
 
+import org.kayura.type.OrderBy;
+import org.kayura.type.PageParams;
+import org.kayura.type.OrderBy.Direction;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
-import org.kayura.type.OrderBy;
-import org.kayura.type.PageParams;
-import org.kayura.type.OrderBy.Direction;
 
 /**
  * @author liangxia@live.com
@@ -22,8 +23,6 @@ public class PageBounds extends RowBounds implements Serializable {
 	private static final long serialVersionUID = 4749581887359387697L;
 
 	public final static int NO_PAGE = 1;
-	public static final int NO_ROW_OFFSET = 0;
-	public static final int NO_ROW_LIMIT = Integer.MAX_VALUE;
 
 	protected int page = NO_PAGE;
 	protected int limit = NO_ROW_LIMIT;

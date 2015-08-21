@@ -21,6 +21,7 @@
   		<groupId>org.mybatis</groupId>
   		<artifactId>mybatis</artifactId>
   		<version>3.3.0</version>
+  		<optional>true</optional>
   	</dependency>
   	<dependency>
   		<groupId>junit</groupId>
@@ -60,7 +61,8 @@
   	<dependency>
   		<groupId>org.springframework</groupId>
   		<artifactId>spring-core</artifactId>
-  		<version>3.2.8.RELEASE</version>
+  		<version>3.2.14.RELEASE</version>
+  		<optional>true</optional>
   	</dependency>
   	<dependency>
   		<groupId>mysql</groupId>
@@ -70,12 +72,14 @@
   	<dependency>
   		<groupId>org.springframework</groupId>
   		<artifactId>spring-webmvc</artifactId>
-  		<version>3.2.8.RELEASE</version>
+  		<version>3.2.14.RELEASE</version>
+  		<optional>true</optional>
   	</dependency>
   	<dependency>
   		<groupId>javax.servlet</groupId>
   		<artifactId>servlet-api</artifactId>
   		<version>2.5</version>
+  		<optional>true</optional>
   	</dependency>
   </dependencies>
 </project>

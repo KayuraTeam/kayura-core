@@ -4,7 +4,6 @@
  */
 package org.kayura.mybatis.plugin;
 
-import org.kayura.type.PageParams;
 import org.kayura.mybatis.type.PageBounds;
 import org.kayura.type.PageList;
 
