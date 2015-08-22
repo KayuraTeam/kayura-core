@@ -13,368 +13,379 @@ import java.util.Map.Entry;
  *
  */
 public class PropertiesUtils {
-    
-    public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
-    public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
-    public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
-    private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_NEVER;
-    
-    private Properties p;
-    
-    public PropertiesUtils(Properties p) {
-	setProperties(p);
-    }
-    
-    public PropertiesUtils(Properties p, int systemPropertiesMode) {
-	setProperties(p);
-	if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
-		&& systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
-		&& systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
-	    throw new IllegalArgumentException("error systemPropertiesMode mode:"
-		    + systemPropertiesMode);
+
+	public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
+	public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
+	public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
+	private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_NEVER;
+
+	private Properties p;
+
+	public PropertiesUtils(Properties p) {
+		setProperties(p);
 	}
-	this.systemPropertiesMode = systemPropertiesMode;
-    }
-    
-    public Properties getProperties() {
-	return p;
-    }
-    
-    public void setProperties(Properties props) {
-	if (props == null)
-	    throw new IllegalArgumentException("properties must be not null");
-	this.p = props;
-    }
-    
-    public String getRequiredString(String key) {
-	String value = getProperty(key);
-	if (isBlankString(value)) {
-	    throw new IllegalStateException("required property is blank by key=" + key);
+
+	public PropertiesUtils(Properties p, int systemPropertiesMode) {
+		setProperties(p);
+		if (systemPropertiesMode != SYSTEM_PROPERTIES_MODE_NEVER
+				&& systemPropertiesMode != SYSTEM_PROPERTIES_MODE_FALLBACK
+				&& systemPropertiesMode != SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+			throw new IllegalArgumentException("error systemPropertiesMode mode:" + systemPropertiesMode);
+		}
+		this.systemPropertiesMode = systemPropertiesMode;
 	}
-	return value;
-    }
-    
-    public String getNullIfBlank(String key) {
-	String value = getProperty(key);
-	if (isBlankString(value)) {
-	    return null;
+
+	public static Properties merge(Properties... args) {
+		Properties props = new Properties();
+		if (args.length > 0) {
+			for (Properties p : args) {
+				props.putAll(p);
+			}
+		}
+		return props;
 	}
-	return value;
-    }
-    
-    public String getNullIfEmpty(String key) {
-	String value = getProperty(key);
-	if (value == null || "".equals(value)) {
-	    return null;
+
+	public Properties getProperties() {
+		return p;
 	}
-	return value;
-    }
-    
-    public String getAndTryFromSystem(String key) {
-	String value = getProperty(key);
-	if (isBlankString(value)) {
-	    value = getSystemProperty(key);
+
+	public void setProperties(Properties props) {
+		if (props == null)
+			throw new IllegalArgumentException("properties must be not null");
+		this.p = props;
 	}
-	return value;
-    }
-    
-    private String getSystemProperty(String key) {
-	String value;
-	value = System.getProperty(key);
-	if (isBlankString(value)) {
-	    value = System.getenv(key);
+
+	public String getRequiredString(String key) {
+		String value = getProperty(key);
+		if (isBlankString(value)) {
+			throw new IllegalStateException("required property is blank by key=" + key);
+		}
+		return value;
 	}
-	return value;
-    }
-    
-    public Integer getInteger(String key) {
-	String v = getProperty(key);
-	if (v == null) {
-	    return null;
+
+	public String getNullIfBlank(String key) {
+		String value = getProperty(key);
+		if (isBlankString(value)) {
+			return null;
+		}
+		return value;
 	}
-	return Integer.parseInt(v);
-    }
-    
-    public int getInt(String key, int defaultValue) {
-	if (getProperty(key) == null) {
-	    return defaultValue;
+
+	public String getNullIfEmpty(String key) {
+		String value = getProperty(key);
+		if (value == null || "".equals(value)) {
+			return null;
+		}
+		return value;
 	}
-	return Integer.parseInt(getRequiredString(key));
-    }
-    
-    public int getRequiredInt(String key) {
-	return Integer.parseInt(getRequiredString(key));
-    }
-    
-    public Long getLong(String key) {
-	if (getProperty(key) == null) {
-	    return null;
+
+	public String getAndTryFromSystem(String key) {
+		String value = getProperty(key);
+		if (isBlankString(value)) {
+			value = getSystemProperty(key);
+		}
+		return value;
 	}
-	return Long.parseLong(getRequiredString(key));
-    }
-    
-    public long getLong(String key, long defaultValue) {
-	if (getProperty(key) == null) {
-	    return defaultValue;
+
+	private String getSystemProperty(String key) {
+		String value;
+		value = System.getProperty(key);
+		if (isBlankString(value)) {
+			value = System.getenv(key);
+		}
+		return value;
 	}
-	return Long.parseLong(getRequiredString(key));
-    }
-    
-    public Long getRequiredLong(String key) {
-	return Long.parseLong(getRequiredString(key));
-    }
-    
-    public Boolean getBoolean(String key) {
-	if (getProperty(key) == null) {
-	    return null;
+
+	public Integer getInteger(String key) {
+		String v = getProperty(key);
+		if (v == null) {
+			return null;
+		}
+		return Integer.parseInt(v);
 	}
-	return Boolean.parseBoolean(getRequiredString(key));
-    }
-    
-    public boolean getBoolean(String key, boolean defaultValue) {
-	if (getProperty(key) == null) {
-	    return defaultValue;
+
+	public int getInt(String key, int defaultValue) {
+		if (getProperty(key) == null) {
+			return defaultValue;
+		}
+		return Integer.parseInt(getRequiredString(key));
 	}
-	return Boolean.parseBoolean(getRequiredString(key));
-    }
-    
-    public boolean getRequiredBoolean(String key) {
-	return Boolean.parseBoolean(getRequiredString(key));
-    }
-    
-    public Float getFloat(String key) {
-	if (getProperty(key) == null) {
-	    return null;
+
+	public int getRequiredInt(String key) {
+		return Integer.parseInt(getRequiredString(key));
 	}
-	return Float.parseFloat(getRequiredString(key));
-    }
-    
-    public float getFloat(String key, float defaultValue) {
-	if (getProperty(key) == null) {
-	    return defaultValue;
+
+	public Long getLong(String key) {
+		if (getProperty(key) == null) {
+			return null;
+		}
+		return Long.parseLong(getRequiredString(key));
 	}
-	return Float.parseFloat(getRequiredString(key));
-    }
-    
-    public Float getRequiredFloat(String key) {
-	return Float.parseFloat(getRequiredString(key));
-    }
-    
-    public Double getDouble(String key) {
-	if (getProperty(key) == null) {
-	    return null;
+
+	public long getLong(String key, long defaultValue) {
+		if (getProperty(key) == null) {
+			return defaultValue;
+		}
+		return Long.parseLong(getRequiredString(key));
 	}
-	return Double.parseDouble(getRequiredString(key));
-    }
-    
-    public double getDouble(String key, double defaultValue) {
-	if (getProperty(key) == null) {
-	    return defaultValue;
+
+	public Long getRequiredLong(String key) {
+		return Long.parseLong(getRequiredString(key));
 	}
-	return Double.parseDouble(getRequiredString(key));
-    }
-    
-    public Double getRequiredDouble(String key) {
-	return Double.parseDouble(getRequiredString(key));
-    }
-    
-    public Object setProperty(String key, int value) {
-	return setProperty(key, String.valueOf(value));
-    }
-    
-    public Object setProperty(String key, long value) {
-	return setProperty(key, String.valueOf(value));
-    }
-    
-    public Object setProperty(String key, float value) {
-	return setProperty(key, String.valueOf(value));
-    }
-    
-    public Object setProperty(String key, double value) {
-	return setProperty(key, String.valueOf(value));
-    }
-    
-    public Object setProperty(String key, boolean value) {
-	return setProperty(key, String.valueOf(value));
-    }
-    
-    public String[] getStringArray(String key) {
-	String v = getProperty(key);
-	if (v == null) {
-	    return new String[0];
-	} else {
-	    return tokenizeToStringArray(v, ", \t\n\r\f");
+
+	public Boolean getBoolean(String key) {
+		if (getProperty(key) == null) {
+			return null;
+		}
+		return Boolean.parseBoolean(getRequiredString(key));
 	}
-    }
-    
-    public int[] getIntArray(String key) {
-	return toIntArray(getStringArray(key));
-    }
-    
-    public Properties getStartsWithProperties(String prefix) {
-	if (prefix == null)
-	    throw new IllegalArgumentException("'prefix' must be not null");
-	
-	Properties props = getProperties();
-	Properties result = new Properties();
-	for (Entry<Object, Object> entry : props.entrySet()) {
-	    String key = (String) entry.getKey();
-	    if (key != null && key.startsWith(prefix)) {
-		result.put(key.substring(prefix.length()), entry.getValue());
-	    }
+
+	public boolean getBoolean(String key, boolean defaultValue) {
+		if (getProperty(key) == null) {
+			return defaultValue;
+		}
+		return Boolean.parseBoolean(getRequiredString(key));
 	}
-	return result;
-    }
-    
-    /** delegate method start */
-    
-    public String getProperty(String key, String defaultValue) {
-	String value = getProperty(key);
-	if (isBlankString(value)) {
-	    return defaultValue;
+
+	public boolean getRequiredBoolean(String key) {
+		return Boolean.parseBoolean(getRequiredString(key));
 	}
-	return value;
-    }
-    
-    public String getProperty(String key) {
-	String propVal = null;
-	if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
-	    propVal = getSystemProperty(key);
+
+	public Float getFloat(String key) {
+		if (getProperty(key) == null) {
+			return null;
+		}
+		return Float.parseFloat(getRequiredString(key));
 	}
-	if (propVal == null) {
-	    propVal = p.getProperty(key);
+
+	public float getFloat(String key, float defaultValue) {
+		if (getProperty(key) == null) {
+			return defaultValue;
+		}
+		return Float.parseFloat(getRequiredString(key));
 	}
-	if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
-	    propVal = getSystemProperty(key);
+
+	public Float getRequiredFloat(String key) {
+		return Float.parseFloat(getRequiredString(key));
 	}
-	return propVal;
-    }
-    
-    public Object setProperty(String key, String value) {
-	return p.setProperty(key, value);
-    }
-    
-    public void clear() {
-	p.clear();
-    }
-    
-    public Set<Entry<Object, Object>> entrySet() {
-	return p.entrySet();
-    }
-    
-    public Enumeration<?> propertyNames() {
-	return p.propertyNames();
-    }
-    
-    public boolean contains(Object value) {
-	return p.contains(value);
-    }
-    
-    public boolean containsKey(Object key) {
-	return p.containsKey(key);
-    }
-    
-    public boolean containsValue(Object value) {
-	return p.containsValue(value);
-    }
-    
-    public Enumeration<Object> elements() {
-	return p.elements();
-    }
-    
-    public Object get(Object key) {
-	return p.get(key);
-    }
-    
-    public boolean isEmpty() {
-	return p.isEmpty();
-    }
-    
-    public Enumeration<Object> keys() {
-	return p.keys();
-    }
-    
-    public Set<Object> keySet() {
-	return p.keySet();
-    }
-    
-    public void list(PrintStream out) {
-	p.list(out);
-    }
-    
-    public void list(PrintWriter out) {
-	p.list(out);
-    }
-    
-    public void load(InputStream inStream) throws IOException {
-	p.load(inStream);
-    }
-    
-    public void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
-	p.loadFromXML(in);
-    }
-    
-    public Object put(Object key, Object value) {
-	return p.put(key, value);
-    }
-    
-    public void putAll(Map<? extends Object, ? extends Object> t) {
-	p.putAll(t);
-    }
-    
-    public Object remove(Object key) {
-	return p.remove(key);
-    }
-    
-    /** @deprecated */
-    public void save(OutputStream out, String comments) {
-	p.save(out, comments);
-    }
-    
-    public int size() {
-	return p.size();
-    }
-    
-    public void store(OutputStream out, String comments) throws IOException {
-	p.store(out, comments);
-    }
-    
-    public void storeToXML(OutputStream os, String comment, String encoding) throws IOException {
-	p.storeToXML(os, comment, encoding);
-    }
-    
-    public void storeToXML(OutputStream os, String comment) throws IOException {
-	p.storeToXML(os, comment);
-    }
-    
-    public Collection<Object> values() {
-	return p.values();
-    }
-    
-    public String toString() {
-	return p.toString();
-    }
-    
-    private static boolean isBlankString(String value) {
-	return value == null || "".equals(value.trim());
-    }
-    
-    private static String[] tokenizeToStringArray(String str, String seperators) {
-	StringTokenizer tokenlizer = new StringTokenizer(str, seperators);
-	List<Object> result = new ArrayList<Object>();
-	
-	while (tokenlizer.hasMoreElements()) {
-	    Object s = tokenlizer.nextElement();
-	    result.add(s);
+
+	public Double getDouble(String key) {
+		if (getProperty(key) == null) {
+			return null;
+		}
+		return Double.parseDouble(getRequiredString(key));
 	}
-	return (String[]) result.toArray(new String[result.size()]);
-    }
-    
-    private static int[] toIntArray(String[] array) {
-	int[] result = new int[array.length];
-	for (int i = 0; i < array.length; i++) {
-	    result[i] = Integer.parseInt(array[i]);
+
+	public double getDouble(String key, double defaultValue) {
+		if (getProperty(key) == null) {
+			return defaultValue;
+		}
+		return Double.parseDouble(getRequiredString(key));
 	}
-	return result;
-    }
+
+	public Double getRequiredDouble(String key) {
+		return Double.parseDouble(getRequiredString(key));
+	}
+
+	public Object setProperty(String key, int value) {
+		return setProperty(key, String.valueOf(value));
+	}
+
+	public Object setProperty(String key, long value) {
+		return setProperty(key, String.valueOf(value));
+	}
+
+	public Object setProperty(String key, float value) {
+		return setProperty(key, String.valueOf(value));
+	}
+
+	public Object setProperty(String key, double value) {
+		return setProperty(key, String.valueOf(value));
+	}
+
+	public Object setProperty(String key, boolean value) {
+		return setProperty(key, String.valueOf(value));
+	}
+
+	public String[] getStringArray(String key) {
+		String v = getProperty(key);
+		if (v == null) {
+			return new String[0];
+		} else {
+			return tokenizeToStringArray(v, ", \t\n\r\f");
+		}
+	}
+
+	public int[] getIntArray(String key) {
+		return toIntArray(getStringArray(key));
+	}
+
+	public Properties getStartsWithProperties(String prefix) {
+		if (prefix == null)
+			throw new IllegalArgumentException("'prefix' must be not null");
+
+		Properties props = getProperties();
+		Properties result = new Properties();
+		for (Entry<Object, Object> entry : props.entrySet()) {
+			String key = (String) entry.getKey();
+			if (key != null && key.startsWith(prefix)) {
+				result.put(key.substring(prefix.length()), entry.getValue());
+			}
+		}
+		return result;
+	}
+
+	/** delegate method start */
+
+	public String getProperty(String key, String defaultValue) {
+		String value = getProperty(key);
+		if (isBlankString(value)) {
+			return defaultValue;
+		}
+		return value;
+	}
+
+	public String getProperty(String key) {
+		String propVal = null;
+		if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+			propVal = getSystemProperty(key);
+		}
+		if (propVal == null) {
+			propVal = p.getProperty(key);
+		}
+		if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
+			propVal = getSystemProperty(key);
+		}
+		return propVal;
+	}
+
+	public Object setProperty(String key, String value) {
+		return p.setProperty(key, value);
+	}
+
+	public void clear() {
+		p.clear();
+	}
+
+	public Set<Entry<Object, Object>> entrySet() {
+		return p.entrySet();
+	}
+
+	public Enumeration<?> propertyNames() {
+		return p.propertyNames();
+	}
+
+	public boolean contains(Object value) {
+		return p.contains(value);
+	}
+
+	public boolean containsKey(Object key) {
+		return p.containsKey(key);
+	}
+
+	public boolean containsValue(Object value) {
+		return p.containsValue(value);
+	}
+
+	public Enumeration<Object> elements() {
+		return p.elements();
+	}
+
+	public Object get(Object key) {
+		return p.get(key);
+	}
+
+	public boolean isEmpty() {
+		return p.isEmpty();
+	}
+
+	public Enumeration<Object> keys() {
+		return p.keys();
+	}
+
+	public Set<Object> keySet() {
+		return p.keySet();
+	}
+
+	public void list(PrintStream out) {
+		p.list(out);
+	}
+
+	public void list(PrintWriter out) {
+		p.list(out);
+	}
+
+	public void load(InputStream inStream) throws IOException {
+		p.load(inStream);
+	}
+
+	public void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
+		p.loadFromXML(in);
+	}
+
+	public Object put(Object key, Object value) {
+		return p.put(key, value);
+	}
+
+	public void putAll(Map<? extends Object, ? extends Object> t) {
+		p.putAll(t);
+	}
+
+	public Object remove(Object key) {
+		return p.remove(key);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public void save(OutputStream out, String comments) {
+		p.save(out, comments);
+	}
+
+	public int size() {
+		return p.size();
+	}
+
+	public void store(OutputStream out, String comments) throws IOException {
+		p.store(out, comments);
+	}
+
+	public void storeToXML(OutputStream os, String comment, String encoding) throws IOException {
+		p.storeToXML(os, comment, encoding);
+	}
+
+	public void storeToXML(OutputStream os, String comment) throws IOException {
+		p.storeToXML(os, comment);
+	}
+
+	public Collection<Object> values() {
+		return p.values();
+	}
+
+	public String toString() {
+		return p.toString();
+	}
+
+	private static boolean isBlankString(String value) {
+		return value == null || "".equals(value.trim());
+	}
+
+	private static String[] tokenizeToStringArray(String str, String seperators) {
+		StringTokenizer tokenlizer = new StringTokenizer(str, seperators);
+		List<Object> result = new ArrayList<Object>();
+
+		while (tokenlizer.hasMoreElements()) {
+			Object s = tokenlizer.nextElement();
+			result.add(s);
+		}
+		return (String[]) result.toArray(new String[result.size()]);
+	}
+
+	private static int[] toIntArray(String[] array) {
+		int[] result = new int[array.length];
+		for (int i = 0; i < array.length; i++) {
+			result[i] = Integer.parseInt(array[i]);
+		}
+		return result;
+	}
 }

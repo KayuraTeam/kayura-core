@@ -8,13 +8,18 @@ import org.kayura.logging.Log;
 import org.kayura.logging.LogFactory;
 import org.kayura.mybatis.plugin.paginator.Dialect;
 import org.kayura.mybatis.plugin.paginator.SqlHelper;
+import org.kayura.mybatis.plugin.paginator.dialect.MySQLDialect;
+import org.kayura.mybatis.plugin.paginator.dialect.OracleDialect;
+import org.kayura.mybatis.plugin.paginator.dialect.SQLServer2005Dialect;
 import org.kayura.mybatis.type.PageBounds;
 import org.kayura.type.PageList;
 import org.kayura.type.Paginator;
 import org.kayura.utils.PropertiesUtils;
 
 import java.lang.reflect.Constructor;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -40,10 +45,9 @@ import org.apache.ibatis.session.RowBounds;
 
 /**
  * @author liangxia@live.com
- * 
  */
-@Intercepts(value = { @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
-		RowBounds.class, ResultHandler.class }) })
+@Intercepts(value = { @Signature(type = Executor.class, method = "query", 
+	args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }) })
 public class PagerInterceptor implements Interceptor {
 
 	private static Log logger = LogFactory.getLog(PagerInterceptor.class);
@@ -53,9 +57,16 @@ public class PagerInterceptor implements Interceptor {
 	static int ROWBOUNDS_INDEX = 2;
 	static int RESULT_HANDLER_INDEX = 3;
 
+	static Map<String, String> dialectAlias = new HashMap<String, String>();
 	static ExecutorService Pool;
 	String dialectClass;
 	boolean asyncTotalCount = false;
+
+	static {
+		dialectAlias.put("mysql", MySQLDialect.class.getName());
+		dialectAlias.put("sqlserver", SQLServer2005Dialect.class.getName());
+		dialectAlias.put("oracle", OracleDialect.class.getName());
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object intercept(final Invocation invocation) throws Throwable {
@@ -186,8 +197,11 @@ public class PagerInterceptor implements Interceptor {
 
 	public void setProperties(Properties properties) {
 		PropertiesUtils propertiesHelper = new PropertiesUtils(properties);
-		String dialectClass = propertiesHelper.getRequiredString("dialectClass");
-		setDialectClass(dialectClass);
+		String dialect = propertiesHelper.getRequiredString("dialect").toLowerCase();
+		if (dialectAlias.containsKey(dialect)) {
+			dialect = dialectAlias.get(dialect);
+		}
+		setDialectClass(dialect);
 		setAsyncTotalCount(propertiesHelper.getBoolean("asyncTotalCount", false));
 		setPoolMaxSize(propertiesHelper.getInt("poolMaxSize", 0));
 	}
