@@ -46,8 +46,8 @@ import org.apache.ibatis.session.RowBounds;
 /**
  * @author liangxia@live.com
  */
-@Intercepts(value = { @Signature(type = Executor.class, method = "query", 
-	args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }) })
+@Intercepts(value = { @Signature(type = Executor.class, method = "query", args = {
+		MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }) })
 public class PagerInterceptor implements Interceptor {
 
 	private static Log logger = LogFactory.getLog(PagerInterceptor.class);
@@ -70,16 +70,23 @@ public class PagerInterceptor implements Interceptor {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object intercept(final Invocation invocation) throws Throwable {
-		final Executor executor = (Executor) invocation.getTarget();
+
 		final Object[] queryArgs = invocation.getArgs();
+		final RowBounds rowBounds = (RowBounds) queryArgs[ROWBOUNDS_INDEX];
+		
+		if (!(rowBounds instanceof PageBounds)) {
+			return invocation.proceed();
+		}
+		
+		final Executor executor = (Executor) invocation.getTarget();
 		final MappedStatement ms = (MappedStatement) queryArgs[MAPPED_STATEMENT_INDEX];
 		final Object parameter = queryArgs[PARAMETER_INDEX];
-		final RowBounds rowBounds = (RowBounds) queryArgs[ROWBOUNDS_INDEX];
 		final PageBounds pageBounds = new PageBounds(rowBounds);
 
 		logger.trace("OffsetLimitInterceptor.intercept:");
 
-		if (pageBounds.getOffset() == RowBounds.NO_ROW_OFFSET && pageBounds.getLimit() == RowBounds.NO_ROW_LIMIT
+		if (pageBounds.getOffset() == RowBounds.NO_ROW_OFFSET
+				&& pageBounds.getLimit() == RowBounds.NO_ROW_LIMIT
 				&& pageBounds.getOrders().isEmpty()) {
 			return invocation.proceed();
 		}
@@ -87,20 +94,26 @@ public class PagerInterceptor implements Interceptor {
 		final Dialect dialect;
 		try {
 			Class<?> clazz = Class.forName(dialectClass);
-			Constructor<?> constructor = clazz.getConstructor(MappedStatement.class, Object.class, PageBounds.class);
-			dialect = (Dialect) constructor.newInstance(new Object[] { ms, parameter, pageBounds });
+			Constructor<?> constructor = clazz.getConstructor(MappedStatement.class,
+					Object.class, PageBounds.class);
+			dialect = (Dialect) constructor
+					.newInstance(new Object[] { ms, parameter, pageBounds });
 		} catch (Exception e) {
-			throw new ClassNotFoundException("Cannot create dialect instance: " + dialectClass, e);
+			throw new ClassNotFoundException(
+					"Cannot create dialect instance: " + dialectClass, e);
 		}
 
 		final BoundSql boundSql = ms.getBoundSql(parameter);
 
-		queryArgs[MAPPED_STATEMENT_INDEX] = copyFromNewSql(ms, boundSql, dialect.getPageSQL(),
-				dialect.getParameterMappings(), dialect.getParameterObject());
+		queryArgs[MAPPED_STATEMENT_INDEX] = copyFromNewSql(ms, boundSql,
+				dialect.getPageSQL(), dialect.getParameterMappings(),
+				dialect.getParameterObject());
 		queryArgs[PARAMETER_INDEX] = dialect.getParameterObject();
-		queryArgs[ROWBOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
+		queryArgs[ROWBOUNDS_INDEX] = new RowBounds(RowBounds.NO_ROW_OFFSET,
+				RowBounds.NO_ROW_LIMIT);
 
-		Boolean async = pageBounds.getAsyncTotalCount() == null ? asyncTotalCount : pageBounds.getAsyncTotalCount();
+		Boolean async = pageBounds.getAsyncTotalCount() == null ? asyncTotalCount
+				: pageBounds.getAsyncTotalCount();
 		Future<List> listFuture = call(new Callable<List>() {
 			public List call() throws Exception {
 				return (List) invocation.proceed();
@@ -112,9 +125,12 @@ public class PagerInterceptor implements Interceptor {
 				public Paginator call() throws Exception {
 					Integer count;
 					Cache cache = ms.getCache();
-					if (cache != null && ms.isUseCache() && ms.getConfiguration().isCacheEnabled()) {
-						CacheKey cacheKey = executor.createCacheKey(ms, parameter, new PageBounds(),
-								copyFromBoundSql(ms, boundSql, dialect.getCountSQL(), boundSql.getParameterMappings(),
+					if (cache != null && ms.isUseCache()
+							&& ms.getConfiguration().isCacheEnabled()) {
+						CacheKey cacheKey = executor.createCacheKey(ms, parameter,
+								new PageBounds(),
+								copyFromBoundSql(ms, boundSql, dialect.getCountSQL(),
+										boundSql.getParameterMappings(),
 										boundSql.getParameterObject()));
 						count = (Integer) cache.getObject(cacheKey);
 						if (count == null) {
@@ -124,7 +140,8 @@ public class PagerInterceptor implements Interceptor {
 					} else {
 						count = SqlHelper.getCount(ms, parameter, boundSql, dialect);
 					}
-					return new Paginator(pageBounds.getPage(), pageBounds.getLimit(), count);
+					return new Paginator(pageBounds.getPage(), pageBounds.getLimit(),
+							count);
 				}
 			};
 			Future<Paginator> countFutrue = call(countTask, async);
@@ -145,26 +162,31 @@ public class PagerInterceptor implements Interceptor {
 		}
 	}
 
-	private MappedStatement copyFromNewSql(MappedStatement ms, BoundSql boundSql, String sql,
-			List<ParameterMapping> parameterMappings, Object parameter) {
-		BoundSql newBoundSql = copyFromBoundSql(ms, boundSql, sql, parameterMappings, parameter);
+	private MappedStatement copyFromNewSql(MappedStatement ms, BoundSql boundSql,
+			String sql, List<ParameterMapping> parameterMappings, Object parameter) {
+		BoundSql newBoundSql = copyFromBoundSql(ms, boundSql, sql, parameterMappings,
+				parameter);
 		return copyFromMappedStatement(ms, new BoundSqlSqlSource(newBoundSql));
 	}
 
 	private BoundSql copyFromBoundSql(MappedStatement ms, BoundSql boundSql, String sql,
 			List<ParameterMapping> parameterMappings, Object parameter) {
-		BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), sql, parameterMappings, parameter);
+		BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), sql, parameterMappings,
+				parameter);
 		for (ParameterMapping mapping : boundSql.getParameterMappings()) {
 			String prop = mapping.getProperty();
 			if (boundSql.hasAdditionalParameter(prop)) {
-				newBoundSql.setAdditionalParameter(prop, boundSql.getAdditionalParameter(prop));
+				newBoundSql.setAdditionalParameter(prop,
+						boundSql.getAdditionalParameter(prop));
 			}
 		}
 		return newBoundSql;
 	}
 
-	private MappedStatement copyFromMappedStatement(MappedStatement ms, SqlSource newSqlSource) {
-		Builder builder = new Builder(ms.getConfiguration(), ms.getId(), newSqlSource, ms.getSqlCommandType());
+	private MappedStatement copyFromMappedStatement(MappedStatement ms,
+			SqlSource newSqlSource) {
+		Builder builder = new Builder(ms.getConfiguration(), ms.getId(), newSqlSource,
+				ms.getSqlCommandType());
 
 		builder.resource(ms.getResource());
 		builder.fetchSize(ms.getFetchSize());

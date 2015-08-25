@@ -13,20 +13,18 @@ import java.util.List;
  * @author liangxia@live.com
  *
  */
-public class PageList<E> implements Serializable {
+public class PageList<E> extends ArrayList<E>implements Serializable {
 
 	private static final long serialVersionUID = 1611112691285620907L;
 
-	private List<E> rows;
 	private Paginator paginator;
 
 	public PageList() {
-		rows = new ArrayList<E>();
 	}
 
 	public PageList(Collection<? extends E> data) {
 		this();
-		rows.addAll(data);
+		this.addAll(data);
 	}
 
 	public PageList(Collection<? extends E> data, Paginator paginator) {
@@ -55,10 +53,11 @@ public class PageList<E> implements Serializable {
 	}
 
 	public List<E> getRows() {
-		return rows;
+		return this;
 	}
 
 	public void setRows(List<E> rows) {
-		this.rows = rows;
+		this.clear();
+		this.addAll(rows);
 	}
 }
