@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -16,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * @author Liangxia@live.com
  * @author Clinton Begin
  */
 public class XNode {
@@ -25,10 +27,10 @@ public class XNode {
 	private String body;
 	private Properties attributes;
 	private Properties variables;
-	private XDocument xpathParser;
+	private XDocument document;
 
-	public XNode(XDocument xpathParser, Node node, Properties variables) {
-		this.xpathParser = xpathParser;
+	public XNode(XDocument document, Node node, Properties variables) {
+		this.document = document;
 		this.node = node;
 		this.name = node.getNodeName();
 		this.variables = variables;
@@ -37,7 +39,78 @@ public class XNode {
 	}
 
 	public XNode newXNode(Node node) {
-		return new XNode(xpathParser, node, variables);
+		return new XNode(document, node, variables);
+	}
+
+	public XNode createChildNode(String nodeName) {
+		return createChildNode(nodeName, null, null);
+	}
+
+	public XNode createChildNode(String nodeName, Properties attributes) {
+		return createChildNode(nodeName, attributes, null);
+	}
+
+	public XNode createChildNode(String nodeName, String textContent) {
+		return createChildNode(nodeName, null, textContent);
+	}
+
+	public XNode createChildNode(String nodeName, Properties attributes, String textContent) {
+		Element element = this.document.createElement(nodeName);
+		if (attributes != null) {
+			for (Object key : attributes.keySet()) {
+				element.setAttribute(key.toString(), attributes.get(key).toString());
+			}
+		}
+		if (textContent != null) {
+			element.setTextContent(textContent);
+		}
+
+		this.node.appendChild(element);
+		return newXNode(element);
+	}
+
+	public void setBody(String textContent) {
+		this.node.setNodeValue(textContent);
+	}
+
+	public void setAttributes(Properties attributes) {
+		if (attributes != null) {
+			if ((this.node.getNodeType() == Node.ELEMENT_NODE) && (this.node instanceof Element)) {
+				Element element = (Element) this.node;
+
+				for (Object ks : attributes.keySet()) {
+					String key = ks.toString();
+					String value = attributes.getProperty(key);
+
+					if (!element.hasAttribute(value)) {
+						element.setAttribute(key, value);
+					} else {
+						Attr attr = element.getAttributeNode(key);
+						attr.setValue(value);
+					}
+				}
+			}
+		}
+	}
+
+	public void setAttribute(String key, Integer value) {
+		setAttribute(key, value.toString());
+	}
+
+	public void setAttribute(String key, Boolean value) {
+		setAttribute(key, value.toString());
+	}
+
+	public void setAttribute(String key, String value) {
+		if ((this.node.getNodeType() == Node.ELEMENT_NODE) && (this.node instanceof Element)) {
+			Element element = (Element) this.node;
+			if (!element.hasAttribute(value)) {
+				element.setAttribute(key, value);
+			} else {
+				Attr attr = element.getAttributeNode(key);
+				attr.setValue(value);
+			}
+		}
 	}
 
 	public XNode getParent() {
@@ -45,7 +118,7 @@ public class XNode {
 		if (parent == null || !(parent instanceof Element)) {
 			return null;
 		} else {
-			return new XNode(xpathParser, parent, variables);
+			return new XNode(document, parent, variables);
 		}
 	}
 
@@ -69,8 +142,8 @@ public class XNode {
 			if (current != this) {
 				builder.insert(0, "_");
 			}
-			String value = current.getStringAttribute("id",
-					current.getStringAttribute("value", current.getStringAttribute("property", null)));
+			String value = current.getStringAttribute("id", current.getStringAttribute("value",
+					current.getStringAttribute("property", null)));
 			if (value != null) {
 				value = value.replace('.', '_');
 				builder.insert(0, "]");
@@ -84,23 +157,23 @@ public class XNode {
 	}
 
 	public String evalString(String expression) {
-		return xpathParser.evalString(node, expression);
+		return document.evalString(node, expression);
 	}
 
 	public Boolean evalBoolean(String expression) {
-		return xpathParser.evalBoolean(node, expression);
+		return document.evalBoolean(node, expression);
 	}
 
 	public Double evalDouble(String expression) {
-		return xpathParser.evalDouble(node, expression);
+		return document.evalDouble(node, expression);
 	}
 
 	public List<XNode> evalNodes(String expression) {
-		return xpathParser.evalNodes(node, expression);
+		return document.evalNodes(node, expression);
 	}
 
 	public XNode evalNode(String expression) {
-		return xpathParser.evalNode(node, expression);
+		return document.evalNode(node, expression);
 	}
 
 	public Node getNode() {
@@ -281,7 +354,7 @@ public class XNode {
 			for (int i = 0, n = nodeList.getLength(); i < n; i++) {
 				Node node = nodeList.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					children.add(new XNode(xpathParser, node, variables));
+					children.add(new XNode(document, node, variables));
 				}
 			}
 		}
@@ -361,7 +434,8 @@ public class XNode {
 	}
 
 	private String getBodyData(Node child) {
-		if (child.getNodeType() == Node.CDATA_SECTION_NODE || child.getNodeType() == Node.TEXT_NODE) {
+		if (child.getNodeType() == Node.CDATA_SECTION_NODE
+				|| child.getNodeType() == Node.TEXT_NODE) {
 			String data = ((CharacterData) child).getData();
 			data = PropertyParser.parse(data, variables);
 			return data;

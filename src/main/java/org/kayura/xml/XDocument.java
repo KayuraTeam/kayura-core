@@ -6,7 +6,9 @@ package org.kayura.xml;
 
 import org.kayura.exceptions.KayuraException;
 
+import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -14,11 +16,16 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
@@ -38,6 +45,11 @@ public class XDocument {
 	private EntityResolver entityResolver;
 	private Properties variables;
 	private XPath xpath;
+
+	public XDocument() {
+		commonConstructor(false, null, null);
+		this.document = createDocument(null);
+	}
 
 	public XDocument(String xml) {
 		commonConstructor(false, null, null);
@@ -91,16 +103,30 @@ public class XDocument {
 		this.document = document;
 	}
 
-	public XDocument(Document document, boolean validation,
-			Properties variables) {
+	public XDocument(Document document, boolean validation, Properties variables) {
 		commonConstructor(validation, variables, null);
 		this.document = document;
 	}
 
-	public XDocument(Document document, boolean validation,
-			Properties variables, EntityResolver entityResolver) {
+	public XDocument(Document document, boolean validation, Properties variables,
+			EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = document;
+	}
+
+	public XDocument(InputStream inputStream) {
+		commonConstructor(false, null, null);
+		this.document = createDocument(new InputSource(inputStream));
+	}
+
+	public XDocument(InputStream inputStream, boolean validation) {
+		commonConstructor(validation, null, null);
+		this.document = createDocument(new InputSource(inputStream));
+	}
+
+	public XDocument(InputStream inputStream, boolean validation, Properties variables) {
+		commonConstructor(validation, variables, null);
+		this.document = createDocument(new InputSource(inputStream));
 	}
 
 	public String evalString(String expression) {
@@ -108,8 +134,7 @@ public class XDocument {
 	}
 
 	public String evalString(Object root, String expression) {
-		String result = (String) evaluate(expression, root,
-				XPathConstants.STRING);
+		String result = (String) evaluate(expression, root, XPathConstants.STRING);
 		result = PropertyParser.parse(result, variables);
 		return result;
 	}
@@ -164,8 +189,7 @@ public class XDocument {
 
 	public List<XNode> evalNodes(Object root, String expression) {
 		List<XNode> xnodes = new ArrayList<XNode>();
-		NodeList nodes = (NodeList) evaluate(expression, root,
-				XPathConstants.NODESET);
+		NodeList nodes = (NodeList) evaluate(expression, root, XPathConstants.NODESET);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			xnodes.add(new XNode(this, nodes.item(i), variables));
 		}
@@ -188,6 +212,17 @@ public class XDocument {
 		return new XNode(this, node, variables);
 	}
 
+	public Element createElement(String tagName) {
+		Element element = this.document.createElement(tagName);
+		return element;
+	}
+
+	public XNode createChildNode(String nodeName) {
+		Element element = createElement(nodeName);
+		this.document.appendChild(element);
+		return new XNode(this, element, variables);
+	}
+
 	private Object evaluate(String expression, Object root, QName returnType) {
 		try {
 			return xpath.evaluate(expression, root, returnType);
@@ -198,8 +233,7 @@ public class XDocument {
 
 	private Document createDocument(InputSource inputSource) {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setValidating(validation);
 			factory.setNamespaceAware(false);
 			factory.setIgnoringComments(true);
@@ -211,23 +245,40 @@ public class XDocument {
 			builder.setEntityResolver(entityResolver);
 			builder.setErrorHandler(new ErrorHandler() {
 
-				public void warning(SAXParseException exception)
-						throws SAXException {
+				public void warning(SAXParseException exception) throws SAXException {
 				}
 
-				public void fatalError(SAXParseException exception)
-						throws SAXException {
+				public void fatalError(SAXParseException exception) throws SAXException {
 				}
 
-				public void error(SAXParseException exception)
-						throws SAXException {
+				public void error(SAXParseException exception) throws SAXException {
 				}
 			});
 
-			return builder.parse(inputSource);
+			Document doc = null;
+
+			if (inputSource == null) {
+				doc = builder.newDocument();
+			} else {
+				doc = builder.parse(inputSource);
+			}
+
+			return doc;
 		} catch (Exception e) {
-			throw new KayuraException(
-					"Error creating document instance.  Cause: " + e, e);
+			throw new KayuraException("Error creating document instance.  Cause: " + e, e);
+		}
+	}
+
+	public String toString() {
+		StringWriter sw = new StringWriter();
+		Transformer serializer;
+		try {
+			serializer = TransformerFactory.newInstance().newTransformer();
+			serializer.transform(new DOMSource(this.document), new StreamResult(sw));
+			return sw.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error convert xml", e);
 		}
 	}
 
