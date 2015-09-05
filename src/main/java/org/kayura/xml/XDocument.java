@@ -66,8 +66,7 @@ public class XDocument {
 		this.document = createDocument(new InputSource(xml));
 	}
 
-	public XDocument(String xml, boolean validation, Properties variables,
-			EntityResolver entityResolver) {
+	public XDocument(String xml, boolean validation, Properties variables, EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = createDocument(new InputSource(xml));
 	}
@@ -87,8 +86,7 @@ public class XDocument {
 		this.document = createDocument(new InputSource(reader));
 	}
 
-	public XDocument(Reader reader, boolean validation, Properties variables,
-			EntityResolver entityResolver) {
+	public XDocument(Reader reader, boolean validation, Properties variables, EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = createDocument(new InputSource(reader));
 	}
@@ -108,8 +106,7 @@ public class XDocument {
 		this.document = document;
 	}
 
-	public XDocument(Document document, boolean validation, Properties variables,
-			EntityResolver entityResolver) {
+	public XDocument(Document document, boolean validation, Properties variables, EntityResolver entityResolver) {
 		commonConstructor(validation, variables, entityResolver);
 		this.document = document;
 	}
@@ -269,12 +266,19 @@ public class XDocument {
 		}
 	}
 
-	public String toString() {
+	public String exportXml() {
+		return exportXml(null);
+	}
+
+	public String exportXml(Properties outputAttrs) {
 		StringWriter sw = new StringWriter();
-		Transformer serializer;
+		Transformer t;
 		try {
-			serializer = TransformerFactory.newInstance().newTransformer();
-			serializer.transform(new DOMSource(this.document), new StreamResult(sw));
+			t = TransformerFactory.newInstance().newTransformer();
+			if (outputAttrs != null) {
+				t.setOutputProperties(outputAttrs);
+			}
+			t.transform(new DOMSource(this.document), new StreamResult(sw));
 			return sw.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -282,8 +286,7 @@ public class XDocument {
 		}
 	}
 
-	private void commonConstructor(boolean validation, Properties variables,
-			EntityResolver entityResolver) {
+	private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
 		this.validation = validation;
 		this.entityResolver = entityResolver;
 		this.setVariables(variables);
