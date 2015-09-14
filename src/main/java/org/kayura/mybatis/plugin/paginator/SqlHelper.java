@@ -19,49 +19,49 @@ import org.kayura.logging.LogFactory;
  *
  */
 public class SqlHelper {
-    private static Log logger = LogFactory.getLog(SqlHelper.class);
-    
-    public static int getCount(final MappedStatement mappedStatement, final Object parameterObject,
-	    final BoundSql boundSql, Dialect dialect) throws SQLException {
-	final String count_sql = dialect.getCountSQL();
-	
-	logger.debug("Total count SQL [" + count_sql + "] ");
-	logger.debug("Total count Parameters: " + parameterObject);
-	
-	Connection connection = null;
-	PreparedStatement countStmt = null;
-	ResultSet rs = null;
-	try {
-	    connection = mappedStatement.getConfiguration().getEnvironment().getDataSource()
-		    .getConnection();
-	    countStmt = connection.prepareStatement(count_sql);
-	    DefaultParameterHandler handler = new DefaultParameterHandler(mappedStatement,
-		    parameterObject, boundSql);
-	    handler.setParameters(countStmt);
-	    
-	    rs = countStmt.executeQuery();
-	    int count = 0;
-	    if (rs.next()) {
-		count = rs.getInt(1);
-	    }
-	    logger.debug("Total count: " + count);
-	    return count;
-	} finally {
-	    try {
-		if (rs != null) {
-		    rs.close();
-		}
-	    } finally {
+	private static Log logger = LogFactory.getLog(SqlHelper.class);
+
+	public static int getCount(final MappedStatement mappedStatement, final Object parameterObject,
+			final BoundSql boundSql, Dialect dialect) throws SQLException {
+		final String count_sql = dialect.getCountSQL();
+
+		logger.debug("Total count SQL [" + count_sql + "] ");
+		logger.debug("Total count Parameters: " + parameterObject);
+
+		Connection connection = null;
+		PreparedStatement countStmt = null;
+		ResultSet rs = null;
 		try {
-		    if (countStmt != null) {
-			countStmt.close();
-		    }
+			connection = mappedStatement.getConfiguration().getEnvironment().getDataSource()
+					.getConnection();
+			countStmt = connection.prepareStatement(count_sql);
+			DefaultParameterHandler handler = new DefaultParameterHandler(mappedStatement,
+					parameterObject, boundSql);
+			handler.setParameters(countStmt);
+
+			rs = countStmt.executeQuery();
+			int count = 0;
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+			logger.debug("Total count: " + count);
+			return count;
 		} finally {
-		    if (connection != null && !connection.isClosed()) {
-			connection.close();
-		    }
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+			} finally {
+				try {
+					if (countStmt != null) {
+						countStmt.close();
+					}
+				} finally {
+					if (connection != null && !connection.isClosed()) {
+						connection.close();
+					}
+				}
+			}
 		}
-	    }
 	}
-    }
 }

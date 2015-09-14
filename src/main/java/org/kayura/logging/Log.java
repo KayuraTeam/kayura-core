@@ -15,12 +15,12 @@ public interface Log {
     
     void error(String msg, Throwable e);
     
-    void error(String msg, Object... args);
+    void error(String msg);
     
-    void debug(String msg, Object... args);
+    void debug(String msg);
     
-    void trace(String msg, Object... args);
+    void trace(String msg);
     
-    void warn(String msg, Object... args);
+    void warn(String msg);
     
 }

@@ -25,6 +25,25 @@ public class StringUtils {
 	}
 
 	/**
+	 * 将多个参数字段合并为字符串.
+	 * 
+	 * @param delimiter 间隔符.
+	 * @param args 多个合并元素.
+	 * @return 返回新的字符串.
+	 */
+	public static String join(String delimiter, Integer... args) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < args.length; i++) {
+			if (i == (args.length - 1)) {
+				sb.append(args[i]);
+			} else {
+				sb.append(args[i]).append(delimiter);
+			}
+		}
+		return new String(sb);
+	}
+
+	/**
 	 * 清除所有空白字符串.
 	 * 
 	 * @param source 源字符串.
