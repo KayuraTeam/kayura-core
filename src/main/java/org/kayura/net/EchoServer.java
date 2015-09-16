@@ -1,11 +1,8 @@
 package org.kayura.net;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class EchoServer {
 
@@ -55,10 +52,10 @@ class AcceptHandler implements Runnable {
 	public void run() {
 		try {
 			try {
-				InputStream inStram = incoming.getInputStream();
-				OutputStream outStram = incoming.getOutputStream();
+				//InputStream inStram = incoming.getInputStream();
+				//OutputStream outStram = incoming.getOutputStream();
 				
-				Scanner in = new Scanner(inStram);
+				//Scanner in = new Scanner(inStram);
 
 			} finally {
 				incoming.close();
