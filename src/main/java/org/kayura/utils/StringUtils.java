@@ -31,7 +31,7 @@ public class StringUtils {
 	 * @param args 多个合并元素.
 	 * @return 返回新的字符串.
 	 */
-	public static String join(String delimiter, Integer... args) {
+	public static String join(String delimiter, Object... args) {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < args.length; i++) {
 			if (i == (args.length - 1)) {

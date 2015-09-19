@@ -7,6 +7,7 @@ package org.kayura.spring.webmvc;
 import org.kayura.logging.Log;
 import org.kayura.logging.LogFactory;
 import org.kayura.type.PageParams;
+import org.kayura.utils.PathUtils;
 import org.kayura.type.PageList;
 import org.kayura.web.UISupport;
 
@@ -18,7 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author liangxia@live.com
- *
  */
 public abstract class BaseController {
 
@@ -28,15 +28,14 @@ public abstract class BaseController {
 	private UISupport webuiSupport;
 	private String viewRootPath;
 
-	public void setViewRootPath(String viewRootPath) {
+	protected void setViewRootPath(String viewRootPath) {
 		this.viewRootPath = viewRootPath;
 	}
 
 	/***
 	 * 用于从提供请求信息中获取分页信息.
 	 * 
-	 * @param req
-	 *            Http提供请求信息.
+	 * @param req Http提供请求信息.
 	 * @return 分页信息对象.
 	 */
 	public PageParams getPageBounds(HttpServletRequest req) {
@@ -45,9 +44,8 @@ public abstract class BaseController {
 
 	/***
 	 * 向请求结果集添加数据.
-	 * <li>totalCount: 表示总记录数.<br>
-	 * <li>data: 表示查询结果集.<br>
-	 * <br>
+	 * <p>totalCount: 表示总记录数.
+	 * <p>data: 表示查询结果集.
 	 * 
 	 * @param model
 	 * @param pageList
@@ -58,9 +56,8 @@ public abstract class BaseController {
 
 	/**
 	 * 向请求结果集添加数据.
-	 * <li>totalCount: 表示总记录数.<br>
-	 * <li>data: 表示查询结果集.<br>
-	 * <br>
+	 * <p>totalCount: 表示总记录数.
+	 * <p>data: 表示查询结果集.
 	 * 
 	 * @param model
 	 * @param pageList
@@ -72,20 +69,17 @@ public abstract class BaseController {
 	/**
 	 * 创建一个视图页的路径.
 	 * 
-	 * @param viewName
-	 *            视图文件名.
+	 * @param viewName 视图文件名.
 	 * @return 返回 viewRootPath下的视图名的.
 	 */
 	public String viewResult(String viewName) {
-		return viewRootPath + viewName;
-		//return Paths.get(viewRootPath, viewName).toString();
+		return PathUtils.merge(viewRootPath, viewName);
 	}
 
 	/**
 	 * 将对象转换成 json 格式的字符串.
 	 * 
-	 * @param object
-	 *            用于转换的对象.
+	 * @param object 用于转换的对象.
 	 * @return 返回 json 格式的字符串.
 	 */
 	public String jsonResult(Object object) {
@@ -102,10 +96,8 @@ public abstract class BaseController {
 	/**
 	 * 用于代理执行一个方法，并且返回统一格式的结果值.
 	 * 
-	 * @param map
-	 *            一个 Key,Value类型的集合,它由SpringMvc创建.
-	 * @param executeAction
-	 *            代理的执行方法,可以建立它的匿名方法.
+	 * @param map 一个 Key,Value类型的集合,它由SpringMvc创建.
+	 * @param executeAction 代理的执行方法,可以建立它的匿名方法.
 	 */
 	public void execute(Map<String, Object> map, Action executeAction) {
 
