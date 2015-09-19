@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author liangxia@live.com
  */
-public abstract class BaseController {
+public class BaseController {
 
 	private static final Log logger = LogFactory.getLog(BaseController.class);
 
@@ -44,8 +44,10 @@ public abstract class BaseController {
 
 	/***
 	 * 向请求结果集添加数据.
-	 * <p>totalCount: 表示总记录数.
-	 * <p>data: 表示查询结果集.
+	 * <p>
+	 * totalCount: 表示总记录数.
+	 * <p>
+	 * data: 表示查询结果集.
 	 * 
 	 * @param model
 	 * @param pageList
@@ -56,8 +58,10 @@ public abstract class BaseController {
 
 	/**
 	 * 向请求结果集添加数据.
-	 * <p>totalCount: 表示总记录数.
-	 * <p>data: 表示查询结果集.
+	 * <p>
+	 * totalCount: 表示总记录数.
+	 * <p>
+	 * data: 表示查询结果集.
 	 * 
 	 * @param model
 	 * @param pageList
