@@ -4,6 +4,8 @@
  */
 package org.kayura.utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -120,5 +122,27 @@ public class StringUtils {
 			}
 		}
 		return false;
+	}
+
+	public static Integer[] toInteger(String[] source) {
+
+		List<Integer> result = new ArrayList<Integer>();
+
+		for (int i = 0; i < source.length; i++) {
+			Integer v = Integer.getInteger(source[i]);
+			if (v != null) {
+				result.add(v);
+			}
+		}
+		return (Integer[]) result.toArray();
+	}
+
+	public static Integer[] toInteger(String source) {
+
+		if (!isEmpty(source)) {
+			return toInteger(source.split(","));
+		} else {
+			return null;
+		}
 	}
 }
