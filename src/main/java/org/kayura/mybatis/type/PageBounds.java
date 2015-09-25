@@ -38,7 +38,7 @@ public class PageBounds extends RowBounds implements Serializable {
 		this.page = pageParams.getPage();
 		this.limit = pageParams.getLimit();
 		this.orderbys = pageParams.getOrders();
-		this.containsTotalCount = pageParams.getAsyncTotalCount();
+		this.containsTotalCount = pageParams.isContainsTotalCount();
 		this.asyncTotalCount = pageParams.getAsyncTotalCount();
 	}
 

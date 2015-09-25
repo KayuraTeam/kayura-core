@@ -145,4 +145,15 @@ public class StringUtils {
 			return null;
 		}
 	}
+
+	public static int toInteger(String source, int value) {
+
+		if (!isEmpty(source)) {
+			try {
+				return Integer.parseInt(source);
+			} catch (Exception e) {
+			}
+		}
+		return value;
+	}
 }
