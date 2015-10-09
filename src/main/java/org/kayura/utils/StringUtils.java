@@ -126,15 +126,15 @@ public class StringUtils {
 
 	public static Integer[] toInteger(String[] source) {
 
-		List<Integer> result = new ArrayList<Integer>();
+		Integer[] result = new Integer[source.length];
 
 		for (int i = 0; i < source.length; i++) {
 			Integer v = Integer.getInteger(source[i]);
 			if (v != null) {
-				result.add(v);
+				result[i] = v;
 			}
 		}
-		return (Integer[]) result.toArray();
+		return result;
 	}
 
 	public static Integer[] toInteger(String source) {
