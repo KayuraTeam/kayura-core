@@ -16,7 +16,7 @@ public class GeneralResult implements Serializable {
 	private static final long serialVersionUID = -6068065272117750613L;
 
 	private StringBuilder message;
-	private Integer code;
+	private Integer code = 1;
 	private Map<String, Object> attach;
 
 	public GeneralResult() {

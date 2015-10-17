@@ -20,6 +20,10 @@ public class Result<E extends Serializable> implements Serializable {
 	public Result() {
 	}
 
+	public Result(String message) {
+		setMessage(message);
+	}
+
 	@Override
 	public String toString() {
 		return String.format("Code: %d; Message: %s", code, message.toString());
