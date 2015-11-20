@@ -4,8 +4,6 @@
  */
 package org.kayura.mybatis.plugin;
 
-import org.kayura.logging.Log;
-import org.kayura.logging.LogFactory;
 import org.kayura.mybatis.plugin.paginator.Dialect;
 import org.kayura.mybatis.plugin.paginator.SqlHelper;
 import org.kayura.mybatis.plugin.paginator.dialect.MySQLDialect;
@@ -27,6 +25,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;

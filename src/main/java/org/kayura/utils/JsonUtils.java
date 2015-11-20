@@ -6,8 +6,8 @@ package org.kayura.utils;
 
 import java.io.IOException;
 
-import org.kayura.logging.Log;
-import org.kayura.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
