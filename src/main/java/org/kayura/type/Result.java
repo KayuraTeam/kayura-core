@@ -21,6 +21,16 @@ public class Result<E> implements Serializable {
 	private Integer code = SUCCEED;
 	private E data;
 
+	public static GeneralResult error() {
+
+		return new GeneralResult("", null);
+	}
+
+	public static GeneralResult error(Exception e) {
+
+		return new GeneralResult("", e);
+	}
+
 	public static GeneralResult error(String message, Exception e) {
 
 		return new GeneralResult(message, e);
@@ -34,6 +44,11 @@ public class Result<E> implements Serializable {
 	public static GeneralResult falied(String message) {
 
 		return new GeneralResult(FAILED, message);
+	}
+
+	public static GeneralResult succeed() {
+
+		return new GeneralResult(SUCCEED, "");
 	}
 
 	public static GeneralResult succeed(String message) {
@@ -55,6 +70,18 @@ public class Result<E> implements Serializable {
 	public Result(String message, E data) {
 		setMessage(message);
 		setData(data);
+	}
+
+	public Boolean isError() {
+		return this.code == ERROR;
+	}
+
+	public Boolean isFailed() {
+		return this.code == FAILED;
+	}
+
+	public Boolean isSucceed() {
+		return this.code == SUCCEED;
 	}
 
 	@Override
