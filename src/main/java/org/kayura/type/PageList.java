@@ -13,7 +13,7 @@ import java.util.List;
  * @author liangxia@live.com
  *
  */
-public class PageList<E> extends ArrayList<E>implements Serializable {
+public class PageList<E> extends ArrayList<E> implements Serializable {
 
 	private static final long serialVersionUID = 1611112691285620907L;
 

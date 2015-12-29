@@ -9,19 +9,52 @@ import java.io.Serializable;
 /**
  * @author liangxia@live.com
  */
-public class Result<E extends Serializable> implements Serializable {
+public class Result<E> implements Serializable {
 
 	private static final long serialVersionUID = 37468166158631349L;
 
+	public static final Integer ERROR = -1;
+	public static final Integer FAILED = 0;
+	public static final Integer SUCCEED = 1;
+
 	private StringBuilder message = new StringBuilder();
-	private Integer code = 1;
+	private Integer code = SUCCEED;
 	private E data;
+
+	public static GeneralResult error(String message, Exception e) {
+
+		return new GeneralResult(message, e);
+	}
+
+	public static GeneralResult error(String message) {
+
+		return new GeneralResult(ERROR, message);
+	}
+
+	public static GeneralResult falied(String message) {
+
+		return new GeneralResult(FAILED, message);
+	}
+
+	public static GeneralResult succeed(String message) {
+
+		return new GeneralResult(SUCCEED, message);
+	}
 
 	public Result() {
 	}
 
 	public Result(String message) {
 		setMessage(message);
+	}
+
+	public Result(E data) {
+		setData(data);
+	}
+
+	public Result(String message, E data) {
+		setMessage(message);
+		setData(data);
 	}
 
 	@Override
