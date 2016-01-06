@@ -23,37 +23,52 @@ public class Result<E> implements Serializable {
 
 	public static GeneralResult error() {
 
-		return new GeneralResult("", null);
+		GeneralResult result = new GeneralResult();
+		result.setCode(ERROR);
+		return result;
 	}
 
 	public static GeneralResult error(Exception e) {
-
-		return new GeneralResult("", e);
+		GeneralResult result = new GeneralResult();
+		result.setCode(ERROR);
+		result.setMessage(e.getMessage());
+		result.setException(e);
+		return result;
 	}
 
 	public static GeneralResult error(String message, Exception e) {
-
-		return new GeneralResult(message, e);
+		GeneralResult result = new GeneralResult();
+		result.setCode(ERROR);
+		result.setMessage(message);
+		result.setException(e);
+		return result;
 	}
 
 	public static GeneralResult error(String message) {
-
-		return new GeneralResult(ERROR, message);
+		GeneralResult result = new GeneralResult();
+		result.setCode(ERROR);
+		result.setMessage(message);
+		return result;
 	}
 
 	public static GeneralResult falied(String message) {
-
-		return new GeneralResult(FAILED, message);
+		GeneralResult result = new GeneralResult();
+		result.setCode(FAILED);
+		result.setMessage(message);
+		return result;
 	}
 
 	public static GeneralResult succeed() {
-
-		return new GeneralResult(SUCCEED, "");
+		GeneralResult result = new GeneralResult();
+		result.setCode(SUCCEED);
+		return result;
 	}
 
 	public static GeneralResult succeed(String message) {
-
-		return new GeneralResult(SUCCEED, message);
+		GeneralResult result = new GeneralResult();
+		result.setCode(SUCCEED);
+		result.setMessage(message);
+		return result;
 	}
 
 	public Result() {
@@ -122,10 +137,8 @@ public class Result<E> implements Serializable {
 	}
 
 	public void setMessage(String message, Object... args) {
-		if (this.message != null && this.message.length() > 0) {
-			this.message = new StringBuilder();
-		}
-		addMessage(message, args);
+		this.message.setLength(0);
+		this.message.append(String.format(message, args));
 	}
 
 	public void addMessage(String message, Object... args) {
