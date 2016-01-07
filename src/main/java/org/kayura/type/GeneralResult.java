@@ -23,8 +23,15 @@ public class GeneralResult extends Result<Map<String, Object>> {
 	public Exception getException() {
 		return exception;
 	}
+	
+	public void setError(String message, Exception exception) {
+		this.setCode(ERROR);
+		this.setMessage(message);
+		this.exception = exception;
+	}
 
 	public void setException(Exception exception) {
+		this.setCode(ERROR);
 		this.exception = exception;
 	}
 
