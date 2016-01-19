@@ -4,15 +4,32 @@
  */
 package org.kayura.utils;
 
+import java.security.SecureRandom;
 import java.util.UUID;
+
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * @author liangxia@live.com
  */
 public class KeyUtils {
-    
-    public static String newId() {
-	return UUID.randomUUID().toString().toUpperCase();
-    }
-    
+
+	private static SecureRandom random = new SecureRandom();
+
+	public static String newId() {
+		return UUID.randomUUID().toString().toUpperCase();
+	}
+
+	public static String random() {
+
+		return random(16);
+	}
+
+	public static String random(Integer length) {
+
+		byte[] newToken = new byte[length];
+		random.nextBytes(newToken);
+		return new String(Base64.encodeBase64(newToken));
+	}
+
 }
