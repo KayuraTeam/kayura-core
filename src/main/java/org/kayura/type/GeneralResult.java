@@ -35,12 +35,12 @@ public class GeneralResult extends Result<Map<String, Object>> {
 		this.exception = exception;
 	}
 
-	public void addAttr(String key, Object value) {
+	public void addData(String key, Object value) {
 		Map<String, Object> data = this.getData();
 		data.put(key, value);
 	}
 
-	public Object getAttr(String key) {
+	public Object getData(String key) {
 		Map<String, Object> data = this.getData();
 		return data.get(key);
 	}
