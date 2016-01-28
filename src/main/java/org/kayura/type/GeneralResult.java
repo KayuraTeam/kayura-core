@@ -23,7 +23,7 @@ public class GeneralResult extends Result<Map<String, Object>> {
 	public Exception getException() {
 		return exception;
 	}
-	
+
 	public void setError(String message, Exception exception) {
 		this.setCode(ERROR);
 		this.setMessage(message);
@@ -35,14 +35,33 @@ public class GeneralResult extends Result<Map<String, Object>> {
 		this.exception = exception;
 	}
 
-	public void addData(String key, Object value) {
+	public void add(String key, Object value) {
 		Map<String, Object> data = this.getData();
 		data.put(key, value);
 	}
 
-	public Object getData(String key) {
+	public Object get(String key) {
 		Map<String, Object> data = this.getData();
 		return data.get(key);
+	}
+
+	/**
+	 * 获取 Data 数据项的字符集.
+	 * 
+	 * @param key 数据项的键.
+	 * @return 返回该项的字符集 ( toString ).
+	 */
+	public String getString(String key) {
+		return Convert.toString(get(key));
+	}
+
+	/**
+	 * 获取 Boolean 类型值的数据项.
+	 * @param key 数据项的键.
+	 * @return 返回该项的Boolean值,强制转换.
+	 */
+	public Boolean getBool(String key) {
+		return (Boolean) get(key);
 	}
 
 }
