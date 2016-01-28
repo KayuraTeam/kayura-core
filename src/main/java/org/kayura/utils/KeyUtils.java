@@ -20,6 +20,11 @@ public class KeyUtils {
 		return UUID.randomUUID().toString().toUpperCase();
 	}
 
+	/**
+	 * 获取16位长度的随机 Base64 字符.
+	 * 
+	 * @return
+	 */
 	public static String random() {
 
 		return random(16);
