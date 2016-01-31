@@ -1,5 +1,5 @@
 /**
- * Copyright 2015-2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  * HomePage: http://www.kayura.org
  */
 package org.kayura.type;
@@ -30,6 +30,11 @@ public class GeneralResult extends Result<Map<String, Object>> {
 		this.exception = exception;
 	}
 
+	public void setFalied(String message) {
+		this.setCode(FAILED);
+		this.setMessage(message);
+	}
+
 	public void setException(Exception exception) {
 		this.setCode(ERROR);
 		this.exception = exception;
@@ -57,6 +62,7 @@ public class GeneralResult extends Result<Map<String, Object>> {
 
 	/**
 	 * 获取 Boolean 类型值的数据项.
+	 * 
 	 * @param key 数据项的键.
 	 * @return 返回该项的Boolean值,强制转换.
 	 */
