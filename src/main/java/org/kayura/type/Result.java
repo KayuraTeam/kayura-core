@@ -81,8 +81,19 @@ public class Result<E> implements Serializable {
 	public Result(E data) {
 		setData(data);
 	}
+	
+	public Result(Integer code, E data) {
+		setCode(code);
+		setData(data);
+	}
 
 	public Result(String message, E data) {
+		setMessage(message);
+		setData(data);
+	}
+	
+	public Result(Integer code, String message, E data) {
+		setCode(code);
 		setMessage(message);
 		setData(data);
 	}
