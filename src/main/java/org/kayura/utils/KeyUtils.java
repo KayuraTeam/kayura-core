@@ -17,7 +17,7 @@ public class KeyUtils {
 	private static SecureRandom random = new SecureRandom();
 
 	public static String newId() {
-		return UUID.randomUUID().toString().toUpperCase();
+		return UUID.randomUUID().toString().replace("-", "").toUpperCase();
 	}
 
 	/**
