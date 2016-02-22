@@ -20,6 +20,11 @@ public class PageList<E> extends ArrayList<E> implements Serializable {
 	private Paginator paginator;
 
 	public PageList() {
+
+	}
+
+	public PageList(PageParams params) {
+		this.paginator = new Paginator(params.getPage(), params.getLimit(), 0);
 	}
 
 	public PageList(Collection<? extends E> data) {
