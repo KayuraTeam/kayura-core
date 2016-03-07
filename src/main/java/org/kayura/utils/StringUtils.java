@@ -85,6 +85,10 @@ public class StringUtils {
 		return (str == null || "".equals(str.trim()));
 	}
 
+	public static String emptyToNull(String str) {
+		return isEmpty(str) ? null : str;
+	}
+
 	/**
 	 * 比较2个字符串是否相同.
 	 * 
