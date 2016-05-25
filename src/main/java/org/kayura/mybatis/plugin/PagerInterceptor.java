@@ -74,13 +74,8 @@ public class PagerInterceptor implements Interceptor {
 		final Object[] queryArgs = invocation.getArgs();
 		final RowBounds rowBounds = (RowBounds) queryArgs[ROWBOUNDS_INDEX];
 
-		if (rowBounds == null || !(rowBounds instanceof PageBounds)) {
-			Object data = invocation.proceed();
-			if (data instanceof List) {
-				return new PageList((List) data);
-			} else {
-				return data;
-			}
+		if (!(rowBounds instanceof PageBounds)) {
+			return invocation.proceed();
 		}
 
 		final Executor executor = (Executor) invocation.getTarget();
