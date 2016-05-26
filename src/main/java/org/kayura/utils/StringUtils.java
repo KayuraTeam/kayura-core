@@ -43,6 +43,18 @@ public class StringUtils {
 		return new String(sb);
 	}
 
+	public static String join(String delimiter, int[] args) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < args.length; i++) {
+			if (i == (args.length - 1)) {
+				sb.append(args[i]);
+			} else {
+				sb.append(args[i]).append(delimiter);
+			}
+		}
+		return new String(sb);
+	}
+	
 	/**
 	 * 清除所有空白字符串.
 	 * 
