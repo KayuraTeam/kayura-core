@@ -17,9 +17,9 @@ public class Paginator implements Serializable {
 
 	private int pageSize;
 	private int pageIndex;
-	private int totalCount;
+	private long totalCount;
 
-	public Paginator(int totalCount) {
+	public Paginator(long totalCount) {
 		this.totalCount = totalCount;
 	}
 
@@ -38,7 +38,7 @@ public class Paginator implements Serializable {
 		return pageSize;
 	}
 
-	public int getTotalCount() {
+	public long getTotalCount() {
 		return totalCount;
 	}
 
@@ -85,7 +85,7 @@ public class Paginator implements Serializable {
 	}
 
 	public int getEndRow() {
-		return pageIndex > 0 ? Math.min(pageSize * pageIndex, getTotalCount()) : 0;
+		return (int) (pageIndex > 0 ? Math.min(pageSize * pageIndex, getTotalCount()) : 0);
 	}
 
 	public int getOffset() {
@@ -100,7 +100,7 @@ public class Paginator implements Serializable {
 			return 0;
 		}
 
-		int count = totalCount / pageSize;
+		int count = (int) (totalCount / pageSize);
 		if (totalCount % pageSize > 0) {
 			count++;
 		}
@@ -119,7 +119,7 @@ public class Paginator implements Serializable {
 		return generateLinkPageNumbers(getPageIndex(), (int) getTotalPages(), slidersCount);
 	}
 
-	private static int computeLastPageNumber(int totalItems, int pageSize) {
+	private static int computeLastPageNumber(long totalItems, int pageSize) {
 		if (pageSize <= 0)
 			return 1;
 		int result = (int) (totalItems % pageSize == 0 ? totalItems / pageSize : totalItems / pageSize + 1);
@@ -128,7 +128,7 @@ public class Paginator implements Serializable {
 		return result;
 	}
 
-	private static int computePageNumber(int page, int pageSize, int totalItems) {
+	private static int computePageNumber(int page, int pageSize, long totalItems) {
 		if (page <= 1) {
 			return 1;
 		}

@@ -49,7 +49,7 @@ public class PageList<E> extends ArrayList<E> implements Serializable {
 		return paginator.getTotalPages();
 	}
 
-	public int getTotalCount() {
+	public long getTotalCount() {
 		return paginator.getTotalCount();
 	}
 
