@@ -36,13 +36,4 @@ public class KeyUtils {
 		random.nextBytes(newToken);
 		return new String(Base64.encodeBase64(newToken));
 	}
-
-	public static String randomA(Integer length) {
-
-		byte[] newToken = new byte[length];
-		random.nextBytes(newToken);
-		String s = new String(Base64.encodeBase64(newToken));
-		return s.replace("=", "");
-	}
-	
 }
