@@ -17,7 +17,8 @@ public class StringUtils {
 	/**
 	 * 清除字符串中的特殊字符.
 	 * 
-	 * @param source 源字符串.
+	 * @param source
+	 *            源字符串.
 	 * @return 返回清除后剩余的字符串.
 	 */
 	public static String cleanSpecial(String source) {
@@ -27,8 +28,10 @@ public class StringUtils {
 	/**
 	 * 将多个参数字段合并为字符串.
 	 * 
-	 * @param delimiter 间隔符.
-	 * @param args 多个合并元素.
+	 * @param delimiter
+	 *            间隔符.
+	 * @param args
+	 *            多个合并元素.
 	 * @return 返回新的字符串.
 	 */
 	public static String join(String delimiter, Object[] args) {
@@ -54,11 +57,12 @@ public class StringUtils {
 		}
 		return new String(sb);
 	}
-	
+
 	/**
 	 * 清除所有空白字符串.
 	 * 
-	 * @param source 源字符串.
+	 * @param source
+	 *            源字符串.
 	 * @return 返回清除后剩余的字符串.
 	 */
 	public static String cleanSpace(String source) {
@@ -68,8 +72,10 @@ public class StringUtils {
 	/**
 	 * 清除字符串中的指定字符.
 	 * 
-	 * @param source 源字符串.
-	 * @param symbols 要清除的匹配字符.
+	 * @param source
+	 *            源字符串.
+	 * @param symbols
+	 *            要清除的匹配字符.
 	 * @return 返回清除后剩余的字符串.
 	 */
 	public static String clean(String source, char[] symbols) {
@@ -79,8 +85,10 @@ public class StringUtils {
 	/**
 	 * 清除字符串中的指定字符.
 	 * 
-	 * @param source 源字符串.
-	 * @param symbols 要清除的匹配字符.
+	 * @param source
+	 *            源字符串.
+	 * @param symbols
+	 *            要清除的匹配字符.
 	 * @return 返回清除后剩余的字符串.
 	 */
 	public static String clean(String source, String symbols) {
@@ -90,11 +98,16 @@ public class StringUtils {
 	/**
 	 * 检查字符串是否为null或空字符或空白字符.
 	 * 
-	 * @param str 源字符串.
+	 * @param str
+	 *            源字符串.
 	 * @return 若为null或空字符或空白字符，将返回 true.
 	 */
 	public static boolean isEmpty(String str) {
 		return (str == null || "".equals(str.trim()));
+	}
+
+	public static boolean isNotEmpty(String cs) {
+		return !isEmpty(cs);
 	}
 
 	public static String emptyToNull(String str) {
@@ -104,8 +117,10 @@ public class StringUtils {
 	/**
 	 * 比较2个字符串是否相同.
 	 * 
-	 * @param str1 第1个字符串.
-	 * @param str2 第2个字符串.
+	 * @param str1
+	 *            第1个字符串.
+	 * @param str2
+	 *            第2个字符串.
 	 * @return 相同返回 true 否则返回 false.
 	 */
 	public static boolean equals(String str1, String str2) {
@@ -170,4 +185,5 @@ public class StringUtils {
 		}
 		return value;
 	}
+
 }
