@@ -114,6 +114,10 @@ public class StringUtils {
 		return isEmpty(str) ? null : str;
 	}
 
+	public static String toString(Object value) {
+		return value != null ? value.toString() : null;
+	}
+
 	/**
 	 * 比较2个字符串是否相同.
 	 * 
@@ -184,6 +188,16 @@ public class StringUtils {
 			}
 		}
 		return value;
+	}
+
+	/**
+	 * 判断一个字符串是否为 EL 表达式.
+	 * @param value
+	 * @return
+	 */
+	public static boolean isExpression(String value) {
+
+		return isNotEmpty(value) && value.startsWith("${") && value.endsWith("}");
 	}
 
 }
