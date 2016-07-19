@@ -71,6 +71,10 @@ public class Result<E> implements Serializable {
 		return result;
 	}
 
+	public static <T> Result<T> succeed(T data) {
+		return new Result<T>(data);
+	}
+
 	public Result() {
 	}
 
@@ -81,7 +85,7 @@ public class Result<E> implements Serializable {
 	public Result(E data) {
 		setData(data);
 	}
-	
+
 	public Result(Integer code, E data) {
 		setCode(code);
 		setData(data);
@@ -91,7 +95,7 @@ public class Result<E> implements Serializable {
 		setMessage(message);
 		setData(data);
 	}
-	
+
 	public Result(Integer code, String message, E data) {
 		setCode(code);
 		setMessage(message);
